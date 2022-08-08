@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import * as SQLite from 'expo-sqlite';
+import { useBreakpointResolvedProps } from 'native-base';
 
-const db = SQLite.openDatabase("db.date-dealer","4.0.0")
+const db = SQLite.openDatabase("db.date-dealer-ios-test","1.0.0")
 
 const turnForeignKeysOn = ()=>
 {
@@ -19,6 +20,21 @@ const turnForeignKeysOn = ()=>
     )
 }
  
+const insertSchedule = (name,lon,lat,date) =>{
+  return new Promise((resolve, reject)=>{
+  db.transaction(
+      dbName=>{
+          dbName.executeSql(
+              'INSERT INTO schedule (name,lon,lat, date) VALUES(?,?,?,?)',[name,lon,lat,date],(trans, result)=>{
+                resolve(result._array)
+            }
+          )
+      }
+  )
+}
+  )
+}
+
 const insertName = (name) =>{
     return new Promise((resolve, reject)=>{
     db.transaction(
@@ -80,7 +96,7 @@ db.transaction(name => {
       'CREATE TABLE IF NOT EXISTS availability (availabilityId INTEGER REFERENCES users(id), monday TEXT, tuesday TEXT, wednesday TEXT, thursday TEXT, friday, TEXT, saturday TEXT, sunday TEXT)',[],(trans, result)=>{} 
     )
       : tableName == "schedule"? name.executeSql(
-        'CREATE TABLE IF NOT EXISTS schedule (scheduleId INTEGER REFERENCES users(id), week1 TEXT, week2 TEXT, week3 TEXT, week4 TEXT)',[],(trans, result)=>{} 
+        'CREATE TABLE IF NOT EXISTS schedule (scheduleId INTEGER REFERENCES users(id), name TEXT, lon TEXT, lat TEXT, date TEXT)',[],(trans, result)=>{} 
    ) : null
       }
 
@@ -99,7 +115,16 @@ const deleteUsers = () =>
 
   )
 }
+const deleteSchedule = () =>
+{
+  db.transaction(name=>{
+    name.executeSql(
+    'DELETE FROM schedule',[],(trans, result)=>{console.log(trans + " " + result.rowsAffected + " we deleted all schedule")}
+    )
+  }
 
+  )
+}
 const deleteInterests = () =>
 {
   db.transaction(name=>{
@@ -148,7 +173,7 @@ const getSchedule = async () => {
   return new Promise((resolve, reject) => {
       db.transaction(
           name=>{
-           name.executeSql('SELECT * from schedule',[],(trans, result)=>{resolve(result.rows.item(0).name)})
+           name.executeSql('SELECT * from schedule',[],(trans, result)=>{console.log(JSON.stringify(result)),resolve(result.rows._array)})
           }
       )
         }
@@ -200,4 +225,4 @@ const getAvailability = async () => {
       )
   }
 
-export {getAvailability, createTable,deleteUsers, insertName, getNames, insertInterest,dropTable,getInterests, deleteInterests, turnForeignKeysOn, insertAvailability, deleteAvailability} 
+export {getAvailability, createTable,deleteUsers, insertName, getNames, insertInterest,dropTable,getInterests, deleteInterests, turnForeignKeysOn, insertAvailability, deleteAvailability, insertSchedule, deleteSchedule, getSchedule} 

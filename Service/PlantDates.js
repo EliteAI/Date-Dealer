@@ -1,17 +1,18 @@
 const plantDates = (events, days) => {
+    console.log(events)
             return setDates(events, days)         
 
 }
 
 const setDates = (events, count) => {
-    let flag = false;
+   let flag = false;
     let date = new Date()
     if(count == 7)
     {
     return events.map(
         (obj) => {
             date.setDate(date.getDate() + count)
-            obj.scheduledDate = date.toDateString()
+            obj.properties['scheduledDate'] = date.toDateString()
             return obj
 
         }
@@ -22,24 +23,36 @@ const setDates = (events, count) => {
     {
         return events.map(
             (obj) => {
+                console.log(obj + " <--- my obj")
+                console.log(events.length + "events length" + JSON.stringify(events))
+                {
+                    console.log(flag + "value")
                 if(flag == false)
                 {
-            
+                    console.log(JSON.stringify(obj) + "found")
+                    if(obj)
+{
+    
                 date.setDate(date.getDate() + count)
                 // console.log(date.toDateString() + count)
-                obj.scheduledDate = date.toDateString()
+                obj.properties['scheduledDate'] = date.toDateString()
                 flag = true;
                 return obj
+}
                 }
                 else
                 {
+                    if(obj)
+{
                     date.setDate(date.getDate() + 7)
                     // console.log(date.toDateString() + count)
-                    obj.scheduledDate = date.toDateString()
+                    obj.properties['scheduledDate'] = date.toDateString()
                     return obj
+}
                 }
     
             }
+        }
     
         )
     }

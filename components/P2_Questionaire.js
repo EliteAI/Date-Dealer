@@ -10,10 +10,12 @@ const P2_Questionaire = ({ navigation }) => {
   const [name, setName] = useState("")
   const [loading, setLoading] = useState(true)
   const [data,setData] = useState({restaraunt: null, outdoor: null, shopping : null, physical :null, movies: null, concerts: null, lazy: null, creative: null, scenic: null})
-
+  const [isMounted,setIsMounted] = useState(true)
 
   
   const getName = async () => {
+    if(isMounted)
+    {
     try {
     setName(await getNames())
       setLoading(false)
@@ -22,6 +24,12 @@ const P2_Questionaire = ({ navigation }) => {
       // saving error
     }
   }
+  }
+  useEffect(() => {
+    return () => {
+      setIsMounted(false);
+    }
+  }, []);
 
   const handleSubmit = async ()=>{
     deleteInterests()
@@ -49,7 +57,7 @@ const P2_Questionaire = ({ navigation }) => {
           left
           title='restaurants'
           checked={data.restaraunt != null ? true : false }
-          onPress={()=>setData({...data,restaraunt: data.restaraunt == null?'catering.restaraunt' : null})}
+          onPress={()=>setData({...data,restaraunt: data.restaraunt == null?'catering.restaurant' : null})}
         />
         <CheckBox
           left

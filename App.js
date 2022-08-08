@@ -42,7 +42,7 @@ export default function App() {
   },[])
   // options={{headerBackVisible:false}}
   if(loading) {return <View style={styles.container}><ActivityIndicator/></View>}
-   else if(appState == "passed" && !loading)
+   else if(appState == "questioning" && !loading)
 return (
     <NativeBaseProvider>
     <NavigationContainer>

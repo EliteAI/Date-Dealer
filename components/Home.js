@@ -1,22 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, SafeAreaView, FlatList } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, SafeAreaView, FlatList, TouchableOpacity, Linking } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getData, getLocation, getAddress } from '../api/GET';
-import { getAvailability, getInterests } from '../storage/Database';
-import plantDates from '../Service/PlantDates';
+import { getSchedule } from '../storage/Database';
+import MapView from 'react-native-maps';
+
 
 
 const Home = ({ navigation }) => {
   const [loading, setLoading] = useState("")
   const [data, setData] = useState()
-  const [interests, setInterests] = useState({})
-  const [availability, setAvailability] = useState({})
   const [isMounted, setIsMounted] = useState(true)
+  const [appState,setAppState] = useState("questioning")
 
 
-  const queryInterests = async () => {
-    return await getInterests()
 
+
+  const getLoginState = async () => {
+    try {
+      await AsyncStorage.getItem('appState').then((appState)=>{  appState == "passed"? setAppState("passed") : setAppState("questioning")   })
+    } catch (e) {
+      // saving error
+    }
   }
   const getName = async () => {
     try {
@@ -30,128 +34,23 @@ const Home = ({ navigation }) => {
 
   useEffect(() => {
     if (isMounted) {
-      let activities
-      setLoading("interests");
-      queryInterests().then
-        (
-          (result) => {
-            setInterests(result)
-            setLoading("location")
-            getLocation().then(
-              (loc) => {
-                setLoading("events")
-                getData(loc, result).then(
-                  (res) => {
-                    setLoading("availability")
-                    console.log(loading + "test")
-                    activities = res
-                    getAvailability()
-                      .then(
-                        (res) => {
-                          var days = {
-                            0: {
-                              monday: 1,
-                              tuesday: 2,
-                              wednesday: 3,
-                              thursday: 4,
-                              friday: 5,
-                              saturday: 6,
-                              sunday: 7
-                            },
-                            1: {
-                              monday: 7,
-                              tuesday: 8,
-                              wednesday: 9,
-                              thursday: 10,
-                              friday: 11,
-                              saturday: 12,
-                              sunday: 13
-                            },
-                            2: {
-                              monday: 6,
-                              tuesday: 7,
-                              wednesday: 8,
-                              thursday: 9,
-                              friday: 10,
-                              saturday: 11,
-                              sunday: 12
-                            },
-                            3: {
-                              monday: 5,
-                              tuesday: 6,
-                              wednesday: 7,
-                              thursday: 8,
-                              friday: 9,
-                              saturday: 10,
-                              sunday: 11
-                            },
-                            4: {
-                              monday: 4,
-                              tuesday: 5,
-                              wednesday: 6,
-                              thursday: 7,
-                              friday: 8,
-                              saturday: 9,
-                              sunday: 10
-                            },
-                            5: {
-                              monday: 3,
-                              tuesday: 4,
-                              wednesday: 8,
-                              thursday: 9,
-                              friday: 10,
-                              saturday: 11,
-                              sunday: 12
-                            },
-                            6: {
-                              monday: 2,
-                              tuesday: 3,
-                              wednesday: 4,
-                              thursday: 5,
-                              friday: 6,
-                              saturday: 7,
-                              sunday: 8
-                            }
-                          }
-                          console.log(activities.length)
-                          Object.keys(res).forEach(key => {
-                            if (res[key] == 1) {
-                              setData(plantDates(activities, days[new Date().getDay()][key]))
+  
 
-                            }
-                          }
-                          )
-                          setLoading("settingDates")
+      getSchedule().then(
+        (res)=>setData(res)
+      )
+      setLoading(false)
 
-
-                        }
-                      )
-                      .then(
-                        (res) => {
-                          setLoading("finalizing")
-                          setAvailability(res)
-                        }
-                      )
-                      .then(
-                        () => setLoading("done")
-
-                      )
-                  }
-                )
-
-              }
-            )
-          }
-        )
+     
     }
 
   }
     , [])
-    useEffect(
-      ()=>{
+  useEffect(
+    () => {
 
-      }
-      ,[loading])
+    }
+    , [loading, data])
 
   useEffect(() => {
     return () => {
@@ -163,40 +62,45 @@ const Home = ({ navigation }) => {
 
 
   const renderItem = ({ item }) => {
-
-
-    return <Text>{item.properties.name + " ---- " + item.scheduledDate} </Text>
+    {
+      if (item) return <TouchableOpacity onPress={()=>Linking.openURL('http://maps.apple.com/maps?daddr=38.7875851,-9.3906089')}><Text>{item.name + " ---- " + item.date} </Text></TouchableOpacity>
+    }
   };
 
-  if (loading == "interests") return <View style={styles.container}>
-    <Text>evaluating interests. </Text><ActivityIndicator></ActivityIndicator></View>
-  else if (loading == "location") return <View style={styles.container}>
-    <Text>getting your current location. .</Text><ActivityIndicator></ActivityIndicator></View>
-  else if (loading == "events") return <View style={styles.container}>
-    <Text>getting events near you. . .</Text><ActivityIndicator></ActivityIndicator></View>
-  else if (loading == "availability") return <View style={styles.container}>
-    <Text>fetching your availability. . . .</Text><ActivityIndicator></ActivityIndicator></View>
-  else if (loading == "settingDates") return <View style={styles.container}>
-    <Text>tying events to your availability!</Text><ActivityIndicator></ActivityIndicator></View>
-  else if (loading == "finalizing") return <View style={styles.container}>
-    <Text>finalizing. . .</Text><ActivityIndicator></ActivityIndicator></View>
-  else
-    return (
-      <View style={styles.container}>
-        <SafeAreaView style={styles.container}>
-          <Text>your dates below! Have fun & enjoy the romance!</Text>
+  if (loading) return <ActivityIndicator/>
 
-          <FlatList data={data} renderItem={renderItem} />
-        </SafeAreaView>
-      </View>
-    )
+  else return <MapView
+  style = {{width:'100%',height:'100%'}}
+  initialRegion={{
+    latitude: 37.78825,
+    longitude: -122.4324,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  }}
+/>
+    // return (
+    //   <View style={styles.container}>
+    //     <View style = {styles.bannerContainer}>
+    //       <Text>your dates below! Have fun & enjoy the romance!</Text>
+    //       </View>
+
+    //     <FlatList data={data} renderItem={renderItem} contentContainerStyle = {styles.listContainer} />
+    //   </View>
+    // )
 }
 
 
 export default Home
 
 const styles = StyleSheet.create({
-  container: { flex: 1, width: '100%', justifyContent: 'center', alignItems: 'center' }
-
+  container: { flex: 1, width: '100%', justifyContent: 'space-around', alignItems: 'center' },
+  listContainer:{
+    alignItems:'center',
+    flex:1,
+    justifyContent:'space-around'
+  }
+,
+bannerContainer:{ height:'10%',justifyContent:'center'
+}
 });
 

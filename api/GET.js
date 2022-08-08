@@ -1,38 +1,54 @@
 import * as Location from 'expo-location';
 
-const shuffle = (repeating)=>{
-let random = Math.floor(Math.random() * 4)
-while ( repeating.includes(random))
-{
-  random = Math.floor(Math.random() * 4)
-}
+const shuffle = (events)=>{
+  let random = Math.floor(Math.random() * events.length)
+  while(!events[random].properties.name)
+  {
+    random = Math.floor(Math.random() * events.length)
+  }
  return random
 }
 
 const randomizeArray = (events)=>{
   let newArr = []
   let alreadyUsed = []
-  let random;
+  let random = Math.floor(Math.random() * events.length);
+  alreadyUsed.push(random);
   // shuffle
-  random = Math.floor(Math.random() * events.length);
+
+    console.log("looping")
+  random = shuffle(events)
+
+
+
+  alreadyUsed.push(random)
+
+  newArr.push(events[random])
+  random = shuffle(events)
+  // shuffle
+
+
+  random = shuffle(events)
+
 
   alreadyUsed.push(random)
   newArr.push(events[random])
+  random = shuffle(events)
   // shuffle
-  random = shuffle(alreadyUsed)
+
+
+  random = shuffle(events)
 
   alreadyUsed.push(random)
   newArr.push(events[random])
 
-  // shuffle
-  random = shuffle(alreadyUsed)
-  alreadyUsed.push(random)
-  newArr.push(events[random])
 
-
+  random = shuffle(events)
 
   // shuffle
-  random = shuffle(alreadyUsed)
+
+
+  random = shuffle(events)
   alreadyUsed.push(random)
   newArr.push(events[random])
 
@@ -56,6 +72,7 @@ for(const key in interests)
       //If response is in json then in success
       .then((responseJson) => {
         //Success
+
         data = [...data, ...responseJson.features]
         
       })
@@ -66,8 +83,10 @@ for(const key in interests)
       });
     }
     data = randomizeArray(data).map(
-      (obj)=>{if(obj.properties.name != null) {return obj} }
+      (obj)=>{return obj }
     )
+    console.log(JSON.stringify(data) + " data after random")
+
     return data
   };
 
