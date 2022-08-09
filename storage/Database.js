@@ -41,6 +41,7 @@ const insertName = (name) =>{
         dbName=>{
             dbName.executeSql(
                 'INSERT INTO users (name) VALUES(?)',[name],(trans, result)=>{
+                  console.log(result.rowsAffected)
               
               }
             )
@@ -162,7 +163,7 @@ const getNames = async () => {
 return new Promise((resolve, reject) => {
     db.transaction(
         name=>{
-         name.executeSql('SELECT * from users',[],(trans, result)=>{resolve(result.rows.item(0).name)})
+         name.executeSql('SELECT * from users',[],(trans, result)=>{resolve(result.rows._array)})
         }
     )
       }

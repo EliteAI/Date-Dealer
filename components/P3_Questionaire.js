@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet,Button,TextInput, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet,ImageBackground, ActivityIndicator, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CheckBox } from 'react-native-elements'
 import { getData, getLocation } from '../api/GET';
@@ -136,7 +136,7 @@ const P3_Questionaire= ({navigation})=> {
                   getSchedule().then(
                     (res) => {
                       getAvailability()
-                      navigation.push("Home")    
+                      navigation.push("Date Dealer")    
                       setLoading(false)
                     }
                   )
@@ -156,61 +156,75 @@ const P3_Questionaire= ({navigation})=> {
   if(!loading)
   {
   return (
-    <View style={styles.container}>
+    <ImageBackground resizeMode={"cover"} source={require('../assets/date-dealer_p1.png')} style={styles.container}>
       <View style = {styles.contentContainer}>
 
       <View style={styles.questionHeaderContainer}>
-      <Text>on what days of the week are you generally available?</Text>
+      <Text style = {{fontSize:20, textAlign:'center'}}>on what days of the week are you generally available?</Text>
       </View>
       <View style={styles.checkBoxContainer}>
         <CheckBox
+                containerStyle={{ backgroundColor: 'transparent', borderWidth: 0 }}
+                textStyle={{ color: '#ffff' }}
           left
           title='Monday'
           checked={radioBtn.monday}
           onPress={()=>setRadioBtn({...radioBtn,monday:!radioBtn.monday})}
         />
         <CheckBox
+                containerStyle={{ backgroundColor: 'transparent', borderWidth: 0 }}
+                textStyle={{ color: '#ffff' }}
           left
           title='Tuesday'
           onPress={()=>setRadioBtn({...radioBtn,tuesday:!radioBtn.tuesday})}
           checked={radioBtn.tuesday}
         />
         <CheckBox
+                containerStyle={{ backgroundColor: 'transparent', borderWidth: 0 }}
+                textStyle={{ color: '#ffff' }}
           left
           title='Wednesday'
           onPress={()=>setRadioBtn({...radioBtn,wednesday:!radioBtn.wednesday})}
           checked={radioBtn.wednesday}
         />
         <CheckBox
+                containerStyle={{ backgroundColor: 'transparent', borderWidth: 0 }}
+                textStyle={{ color: '#ffff' }}
           left
           title="Thursday"
           onPress={()=>setRadioBtn({...radioBtn,thursday:!radioBtn.thursday})}
           checked={radioBtn.thursday}
         />
         <CheckBox
+                containerStyle={{ backgroundColor: 'transparent', borderWidth: 0 }}
+                textStyle={{ color: '#ffff' }}
           left
           title='Friday'
           onPress={()=>setRadioBtn({...radioBtn,friday:!radioBtn.friday})}
           checked={radioBtn.friday}
         />
         <CheckBox
+                containerStyle={{ backgroundColor: 'transparent', borderWidth: 0 }}
+                textStyle={{ color: '#ffff' }}
           left
           title='Saturday'
           onPress={()=>setRadioBtn({...radioBtn,saturday:!radioBtn.saturday})}
           checked={radioBtn.saturday}
         />
              <CheckBox
+                     containerStyle={{ backgroundColor: 'transparent', borderWidth: 0 }}
+                     textStyle={{ color: '#ffff' }}
           left
           title='Sunday'
           onPress={()=>setRadioBtn({...radioBtn,sunday:!radioBtn.sunday})}
           checked={radioBtn.sunday}
         />
       </View>
-      <View>
-        <Button title="next" onPress={() => { handleButtonPress()}}></Button>
+      <View style={styles.submitBtn}>
+      <TouchableOpacity style = {styles.nextBtn} onPress={() => { handleButtonPress() }}><Text style = {{color:"white"}}>next</Text></TouchableOpacity>
       </View>
       </View>
-    </View>
+    </ImageBackground>
   );
   }
   else return <ActivityIndicator/>
@@ -243,20 +257,45 @@ const styles = StyleSheet.create({
     width: '100%'
   },
   questionHeaderContainer: {
-    flex: .1,
+    flex: .7,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'space-around',
+    marginHorizontal:10,
+    alignSelf:'center',
 
   },
   checkBoxContainer: {
-    flex: .5,
-  },
+    flex: 1,
+    marginLeft:'4%',
+    justifyContent:'center',
+    marginBottom:'10%'  },
   contentContainer:{
     width:'100%',
     flex:1,
     justifyContent:'space-around',
   },
-  
+  submitBtn: {
+    flex: .1,
+    width: '80%',
+    alignItems:'center',
+    shadowOffset:{width:1,height:5},
+    shadowColor:'#000000',
+    shadowOpacity:.2,
+    shadowRadius:1,
+    elevation:1,
+    justifyContent:'center',
+    alignSelf:'center',
+    marginBottom:'20%'
+  },
+  nextBtn:{
+    backgroundColor:'#36A2B7',
+    width:' 50%',
+    alignItems:'center',
+    height:'100%',
+    borderRadius:10,
+    justifyContent:'center',
+    shadowColor:'blue',
+  },
   });
 

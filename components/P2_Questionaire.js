@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, TextInput, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Button, TextInput, ActivityIndicator, TouchableOpacity, ImageBackground } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CheckBox } from 'react-native-elements'
 import { deleteInterests, getInterests, getNames, insertInterest } from '../storage/Database';
@@ -9,33 +9,27 @@ import { deleteInterests, getInterests, getNames, insertInterest } from '../stor
 const P2_Questionaire = ({ navigation }) => {
   const [name, setName] = useState("")
   const [loading, setLoading] = useState(true)
-  const [data,setData] = useState({restaraunt: null, outdoor: null, shopping : null, physical :null, movies: null, concerts: null, lazy: null, creative: null, scenic: null})
-  const [isMounted,setIsMounted] = useState(true)
+  const [data, setData] = useState({ restaraunt: null, outdoor: null, shopping: null, physical: null, movies: null, concerts: null, lazy: null, creative: null, scenic: null })
 
-  
+
+
   const getName = async () => {
-    if(isMounted)
-    {
     try {
-    setName(await getNames())
+      getNames().then(
+        (res) => setName(res[0].name)
+      )
       setLoading(false)
 
     } catch (e) {
       // saving error
     }
   }
-  }
-  useEffect(() => {
-    return () => {
-      setIsMounted(false);
-    }
-  }, []);
 
-  const handleSubmit = async ()=>{
+  const handleSubmit = async () => {
     deleteInterests()
     insertInterest(data)
 
-    navigation.push("p3_questionaire") 
+    navigation.push("p3_questionaire")
   }
 
   useEffect(() => {
@@ -45,77 +39,93 @@ const P2_Questionaire = ({ navigation }) => {
 
   if (loading) return <ActivityIndicator></ActivityIndicator>
   else return (
-    <View style={styles.container}>
-      <View style = {styles.contentContainer}>
+    <ImageBackground resizeMode={"cover"} source={require('../assets/date-dealer_p1.png')} style={styles.container}>
 
-      <View style={styles.questionHeaderContainer}>
-      <Text>Welcome {name}</Text>
-        <Text>select all that apply:</Text>
-      </View>
-      <View style={styles.checkBoxContainer}>
-        <CheckBox
-          left
-          title='restaurants'
-          checked={data.restaraunt != null ? true : false }
-          onPress={()=>setData({...data,restaraunt: data.restaraunt == null?'catering.restaurant' : null})}
-        />
-        <CheckBox
-          left
-          title='outdoor activities'
-          checked={data.outdoor!= null ? true : false}
-          onPress={()=>setData({...data,outdoor:data.outdoor == null?'leisure' : null})}
-        />
-        <CheckBox
-          left
-          title='shopping'
-          checked={data.shopping!= null ? true : false}
-          onPress={()=>setData({...data,shopping: data.shopping == null?'commercial.shopping_mall' : null})}
-        />
-        <CheckBox
-          left
-          title='physical activities'
-          checked={data.physical!= null ? true : false
-          }
-          onPress={()=>setData({...data,physical
-            : data.physical == null?'natural' : null
-          })}
-        />
-        <CheckBox
-          left
-          title='movies'
-          checked={data.movies!= null ? true : false}
-          onPress={()=>setData({...data,movies: data.movies == null?'entertainment.cinema' : null})}
-        />
-        {/* <CheckBox
+        <View style={styles.questionHeaderContainer}>
+          <Text style = {{fontSize: 20}}>Select at least 3 activities of interest below.</Text>
+        </View>
+        <View style={styles.checkBoxContainer}>
+          <CheckBox
+                 containerStyle={{ backgroundColor: 'transparent', borderWidth: 0 }}
+                 textStyle={{ color: '#ffff' }}
+            left
+            title='restaurants'
+            checked={data.restaraunt != null ? true : false}
+            onPress={() => setData({ ...data, restaraunt: data.restaraunt == null ? 'catering.restaurant' : null })}
+          />
+          <CheckBox
+            containerStyle={{ backgroundColor: 'transparent', borderWidth: 0 }}
+            textStyle={{ color: '#ffff' }}
+            left
+            title='outdoor activities'
+            checked={data.outdoor != null ? true : false}
+            onPress={() => setData({ ...data, outdoor: data.outdoor == null ? 'leisure' : null })}
+          />
+          <CheckBox
+                 containerStyle={{ backgroundColor: 'transparent', borderWidth: 0 }}
+                 textStyle={{ color: '#ffff' }}
+            left
+            title='shopping'
+            checked={data.shopping != null ? true : false}
+            onPress={() => setData({ ...data, shopping: data.shopping == null ? 'commercial.shopping_mall' : null })}
+          />
+          <CheckBox
+                 containerStyle={{ backgroundColor: 'transparent', borderWidth: 0 }}
+                 textStyle={{ color: '#ffff' }}
+            left
+            title='physical activities'
+            checked={data.physical != null ? true : false
+            }
+            onPress={() => setData({
+              ...data, physical
+                : data.physical == null ? 'natural' : null
+            })}
+          />
+          <CheckBox
+                 containerStyle={{ backgroundColor: 'transparent', borderWidth: 0 }}
+            textStyle={{ color: '#ffff' }}
+            left
+            style={{ opacity: 0 }}
+            title='movies'
+            checked={data.movies != null ? true : false}
+            onPress={() => setData({ ...data, movies: data.movies == null ? 'entertainment.cinema' : null })}
+          />
+          {/* <CheckBox
           left
           title='concerts'
           checked={data.concerts}
           onPress={()=>setData({...data,concerts: !data.concerts})}
         /> */}
-                <CheckBox
-          left
-          title='lazy'
-          checked={data.lazy!= null ? true : false}
-          onPress={()=>setData({...data,lazy: data.lazy == null?'leisure.park' : null})}
-        />
-                <CheckBox
-          left
-          title='creative'
-          checked={data.creative!= null ? true : false}
-          onPress={()=>setData({...data,creative: data.creative == null?'entertainment.museum' : null})}
-        />
-                <CheckBox
-          left
-          title='scenic'
-          checked={data.scenic!= null ? true : false}
-          onPress={()=>setData({...data,scenic: data.scenic == null?'natural' : null})}
-        />
-      </View>
-      <View style = {styles.submitBtn}>
-        <Button title="next" onPress={() => { handleSubmit()}}></Button>
-      </View>
-      </View>
-    </View>
+          <CheckBox
+                 containerStyle={{ backgroundColor: 'transparent', borderWidth: 0 }}
+                 textStyle={{ color: '#ffff' }}
+            left
+            title='lazy'
+            checked={data.lazy != null ? true : false}
+            onPress={() => setData({ ...data, lazy: data.lazy == null ? 'leisure.park' : null })}
+          />
+          <CheckBox
+                 containerStyle={{ backgroundColor: 'transparent', borderWidth: 0 }}
+                 textStyle={{ color: '#ffff' }}
+            left
+            title='creative'
+            checked={data.creative != null ? true : false}
+            onPress={() => setData({ ...data, creative: data.creative == null ? 'entertainment.museum' : null })}
+          />
+          <CheckBox
+                 containerStyle={{ backgroundColor: 'transparent', borderWidth: 0 }}
+                 textStyle={{ color: '#ffff' }}
+            left
+            title='scenic'
+            checked={data.scenic != null ? true : false}
+            onPress={() => setData({ ...data, scenic: data.scenic == null ? 'natural' : null })}
+          />
+        </View>
+
+        <View style={styles.submitBtn}>
+        <TouchableOpacity style = {styles.nextBtn} onPress={() => { handleSubmit() }}><Text style = {{color:"white"}}>next</Text></TouchableOpacity>
+        </View>
+    </ImageBackground>
   )
 }
 
@@ -124,11 +134,18 @@ export default P2_Questionaire
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'space-around',
     width: '100%',
   },
-
+  nextBtn:{
+    backgroundColor:'#36A2B7',
+    width:' 50%',
+    alignItems:'center',
+    height:'100%',
+    borderRadius:10,
+    justifyContent:'center',
+    shadowColor:'blue',
+  },
   input: {
     width: '80%',
     height: 50,
@@ -143,27 +160,41 @@ const styles = StyleSheet.create({
   },
   btnContainer: {
     flex: 1,
-    width: '100%'
+    width: '100%',
   },
   questionHeaderContainer: {
-    flex: .1,
+    flex: .7,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'space-around',
+    marginHorizontal:5
 
   },
   checkBoxContainer: {
-    flex: .8,
+    flex: 1,
+    marginLeft:'4%',
+    justifyContent:'center',
+    marginBottom:'10%'
   },
-  contentContainer:{
-    width:'100%',
-    flex:1,
-    justifyContent:'space-around',
+  contentContainer: {
+    width: '100%',
+    flex: 1,
+    justifyContent: 'space-around',
   },
-  submitBtn:{
-    flex:.2
+  submitBtn: {
+    flex: .1,
+    width: '80%',
+    alignItems:'center',
+    shadowOffset:{width:1,height:5},
+    shadowColor:'#000000',
+    shadowOpacity:.2,
+    shadowRadius:1,
+    elevation:1,
+    justifyContent:'center',
+    alignSelf:'center',
+    marginBottom:'20%'
   }
-  
+
 
 });
 

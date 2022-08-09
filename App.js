@@ -8,7 +8,7 @@ import { NativeBaseProvider } from "native-base";
 import Home from './components/Home'
 import P3_Questionaire from './components/P3_Questionaire';
 import P1_Questionaire from './components/P1_Questionaire';
-import { deleteUsers,createTable, dropTable, turnForeignKeysOn } from './storage/Database';
+import { deleteUsers,createTable, dropTable, turnForeignKeysOn , getNames} from './storage/Database';
 
 
 const Stack = createNativeStackNavigator();
@@ -16,14 +16,35 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   const [appState,setAppState] = useState("questioning")
   const [loading,setLoading] = useState(true)
+  const [isMounted,setIsMounted] = useState(true)
+  const [name, setName] = useState("")
+
+
+
   turnForeignKeysOn()
-  dropTable()
   createTable("users")
   createTable("interests")
   createTable("availability")
   createTable("schedule")
 
 
+
+
+  
+  const getName = async () => {
+ 
+    try {
+    // setName(getNames())
+    getNames().then(
+      (res)=>setName(res[0].name)
+
+    )
+
+    } catch (e) {
+      // saving error
+    }
+  
+  }
 
   const getLoginState = async () => {
     try {
@@ -35,23 +56,35 @@ export default function App() {
 
 
   useEffect(() => {
+    if(isMounted)
+    {
+    getLoginState().then(
+      ()=>  getName().then(
+        ()=> setLoading(false)
+      )
 
-    getLoginState()
-    console.log(appState)
-    setLoading(false)
+    )
+    }
   },[])
+
+  useEffect(() => {
+    return () => {
+      setIsMounted(false);
+    }
+  }, []);
+  
   // options={{headerBackVisible:false}}
   if(loading) {return <View style={styles.container}><ActivityIndicator/></View>}
-   else if(appState == "questioning" && !loading)
+   else if(appState == "passed" && !loading)
 return (
     <NativeBaseProvider>
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator screenOptions={{"headerShown": false}}>
         
-        <Stack.Screen name="p1_questionaire" component={P1_Questionaire} />
+        <Stack.Screen  name="p1_questionaire" component={P1_Questionaire} />
         <Stack.Screen name="p2_questionaire" component={P2_Questionaire} />
         <Stack.Screen name="p3_questionaire" component={P3_Questionaire} />
-       <Stack.Screen name ="Home" component={Home}/> 
+       <Stack.Screen name ="Date Dealer" component={Home}/> 
       </Stack.Navigator>
     </NavigationContainer>
     </NativeBaseProvider>
@@ -59,7 +92,7 @@ return (
   else return     <NativeBaseProvider>
   <NavigationContainer>
     <Stack.Navigator>
-      <Stack.Screen name ="Home" component={Home}/>
+      <Stack.Screen name ={"Date Dealer"} component={Home}/>
     </Stack.Navigator>
   </NavigationContainer>
   </NativeBaseProvider>
