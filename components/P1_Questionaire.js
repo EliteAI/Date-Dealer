@@ -19,15 +19,15 @@ const nameSubmit = async (name, navigation) => {
 const P1_Questionaire = ({ navigation }) => {
   const [name, setName] = useState("")
   return (
-    <ImageBackground resizeMode={"cover"} source={require('../assets/date-dealer_p1.png')} style={styles.container}>
+    <ImageBackground resizeMode={"cover"} source={require('../assets/settings-background.png')} style={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style = {styles.headerText}>Welcome to Date Dealer! Enter your name below.</Text>
+        <Text style = {styles.headerText}>Welcome to Date Dealer! Enter you and your significant other's name below.</Text>
       </View>
-      <View style={styles.headerContainer}>
-        <Text>{" "}</Text>
-      </View>
+  
       <View style={styles.inputContainer} >
-        <TextInput onChangeText={(givenName) => { setName(givenName) }} style={styles.input} />
+        <TextInput placeholder='your name here' placeholderTextColor={'#FAF9F6'}  onChangeText={(givenName) => { setName(givenName) }} style={styles.input} />
+        <TextInput placeholder="your significant other's name here" placeholderTextColor={'#FAF9F6'}  onChangeText={(givenName) => { setName(givenName) }} style={styles.input} />
+
       </View>
       <View style={styles.btnContainer}>
         <TouchableOpacity style = {styles.nextBtn} onPress={() => { nameSubmit(name, navigation) }}><Text style = {{color:'white'}}>next</Text></TouchableOpacity>
@@ -52,22 +52,25 @@ const styles = StyleSheet.create({
   input: {
     width: '80%',
     height: 50,
-    borderWidth: 1,
     borderRadius: 10,
-    backgroundColor:'#FFFFFF'
+    backgroundColor:'transparent',
+    borderBottomWidth:1,
+    borderColor:'#FAF9F6',
+    textAlign:'center',
+    color:'white'
   }
   ,
   headerContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems:'center',
-    marginTop:'10%',
+    marginTop:'5%',
   },
   inputContainer: {
-    flex: 1,
+    flex: 2,
     width: '100%',
-    justifyContent: 'flex-start',
-    alignItems: 'center'
+    justifyContent: 'space-around',
+    alignItems: 'center',
   },
   btnContainer: {
     flex: 1.5,
@@ -77,7 +80,8 @@ const styles = StyleSheet.create({
     shadowColor:'#000000',
     shadowOpacity:.2,
     shadowRadius:1,
-    elevation:1
+    elevation:1,
+    justifyContent:'center'
   },
   nextBtn:{
     backgroundColor:'#36A2B7',

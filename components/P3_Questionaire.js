@@ -26,6 +26,7 @@ const P3_Questionaire= ({navigation})=> {
     setLoading(true)
     deleteAvailability()
     let activities;
+    let schedule;
     await insertAvailability(radioBtn)
     await AsyncStorage.setItem("appState","passed")
     await queryInterests().then
@@ -156,7 +157,7 @@ const P3_Questionaire= ({navigation})=> {
   if(!loading)
   {
   return (
-    <ImageBackground resizeMode={"cover"} source={require('../assets/date-dealer_p1.png')} style={styles.container}>
+    <ImageBackground resizeMode={"cover"} source={require('../assets/settings-background.png')} style={styles.container}>
       <View style = {styles.contentContainer}>
 
       <View style={styles.questionHeaderContainer}>
@@ -257,7 +258,7 @@ const styles = StyleSheet.create({
     width: '100%'
   },
   questionHeaderContainer: {
-    flex: .7,
+    flex: .5,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'space-around',

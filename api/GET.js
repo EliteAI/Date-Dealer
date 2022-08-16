@@ -85,7 +85,6 @@ for(const key in interests)
     data = randomizeArray(data).map(
       (obj)=>{return obj }
     )
-    console.log(JSON.stringify(data) + " data after random")
 
     return data
   };

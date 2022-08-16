@@ -39,7 +39,7 @@ const P2_Questionaire = ({ navigation }) => {
 
   if (loading) return <ActivityIndicator></ActivityIndicator>
   else return (
-    <ImageBackground resizeMode={"cover"} source={require('../assets/date-dealer_p1.png')} style={styles.container}>
+    <ImageBackground resizeMode={"cover"} source={require('../assets/settings-background.png')} style={styles.container}>
 
         <View style={styles.questionHeaderContainer}>
           <Text style = {{fontSize: 20}}>Select at least 3 activities of interest below.</Text>

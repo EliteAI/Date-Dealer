@@ -1,12 +1,10 @@
 import React, { useState, useEffect , useRef} from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, SafeAreaView, FlatList, TouchableOpacity, Linking, useWindowDimensions , Animated, Image, ImageBackground} from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, SafeAreaView, FlatList, TouchableOpacity, Linking, useWindowDimensions , Animated, Image, ImageBackground, Button} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getNames, getSchedule, } from '../storage/Database';
-import MapView from 'react-native-maps';
-import { Marker } from 'react-native-maps';
+import * as SMS from 'expo-sms';
 
-
-const Home = ({ navigation }) => {
+const Review = ({ navigation }) => {
   const [loading, setLoading] = useState("")
   const [data, setData] = useState([{name:"",lon:0,lat:0,date:""}])
   const [isMounted, setIsMounted] = useState(true)
@@ -34,7 +32,7 @@ const Home = ({ navigation }) => {
 
       getSchedule().then(
         (res) => setData(res.sort(
-          (objA,objB)=>new Date(objA.date) -new Date(objB.date)
+          (objA,objB)=>Number(objA.date) -Number(objB.date)
         ), 
         // console.log(res.sort(
         //   (objA,objB)=>Number(objA.date) -Number(objB.date)
@@ -63,6 +61,22 @@ const Home = ({ navigation }) => {
       setIsMounted(false);
     }
   }, []);
+
+  const openMessage = async() =>{
+    const isAvailable = await SMS.isAvailableAsync();
+    if (isAvailable) {
+        const { result } = await SMS.sendSMSAsync(
+            [''],
+            'Hey! I found this really cool app called Date Dealer and I think you should give it a try.',
+   
+          );
+              } 
+              
+              else {
+      // misfortune... there's no SMS available on this device
+    }
+    
+  }
 
 
   const viewableItemsChanged = useRef(
@@ -96,33 +110,16 @@ const Home = ({ navigation }) => {
     
     <ImageBackground resizeMode={"cover"} source={require('../assets/date-dealer-home-background.png')} style={styles.container}>
       <View style = {styles.topSpace}>
-      <Text style = {{color:'white', fontSize:20}}>{"Hello "}{ name + "!"}</Text>
-      <Text style = {{color:'white', fontSize:20}}>{"You and your partners' next date is:"}</Text>
-
+      <Text style = {{color:'black', fontSize:20,textAlign:'center'}}>{"Hi "}{ name + "! Thank ou so much for downloading the App."}  {"\n"}  {"\n"} {"If you would like to leave a review, please use one of the links below!"}</Text>
+        <Button title = "leave a review on App Stop Store"/>
+        <Button onPress = {()=>{openMessage()}} title = "share with friends"/>
       </View>
-      <View style = {styles.mapViewContainer}>
-
-  <Text style = {styles.infoText1}>{data[0].name}</Text>
-   <Image source={require('../assets/icons8-outdoor-64.png')}/>
-   <Text style = {styles.infoText2}>{data[0].date}</Text> 
-   <TouchableOpacity style = {[styles.nextBtn, {width:150, height:50}]} onPress={() => Linking.openURL('http://maps.apple.com/maps?daddr=' + data[0].lat + ',' + data[0].lon)}>
-        <Text style = {{color:'#ffff', textAlign:'center'}}>take me there</Text> 
-      </TouchableOpacity>
-      </View>
-<Text style = {{color:'white', fontSize: 20, paddingTop:'10%'}}> upcoming dates:</Text>
-      <FlatList onViewableItemsChanged={viewableItemsChanged} onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }]
-        , {
-          useNativeDriver: false
-        }
-      )}
-      style ={styles.flatListContainer}
-      pagingEnabled={true} bounces={false} showsHorizontalScrollIndicator={true} horizontal data={data} renderItem={({item,index})=>renderItem(item,index)} />
       </ImageBackground>
   )
 }
 
 
-export default Home
+export default Review
 
 const styles = StyleSheet.create({
   container: { 
@@ -183,11 +180,13 @@ flex:4
     justifyContent:'space-around'
   },
   topSpace:{
-    height:'20%',
+    height:'50%',
     alignItems:'center',
     justifyContent:'space-around',
     padding:20,
-    marginTop:40
+    backgroundColor:'white',
+    borderRadius:10
+
   },
   nextDateContainer:{justifyContent:'space-around',flex:.2, alignItems:'center'},
   flatListContainer:{
@@ -205,7 +204,7 @@ flex:4
   nextBtn:{
     backgroundColor:'#36A2B7',
     alignItems:'center',
-    height:50,
+    height:'25%',
     borderRadius:20,
     justifyContent:'center',
     shadowColor:'blue',

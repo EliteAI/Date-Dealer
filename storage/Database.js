@@ -2,7 +2,7 @@ import { useState } from 'react';
 import * as SQLite from 'expo-sqlite';
 import { useBreakpointResolvedProps } from 'native-base';
 
-const db = SQLite.openDatabase("db.date-dealer-ios-test","1.0.0")
+const db = SQLite.openDatabase("db.date-dealer-ios-development","1.0.0")
 
 const turnForeignKeysOn = ()=>
 {
@@ -26,6 +26,38 @@ const insertSchedule = (name,lon,lat,date) =>{
       dbName=>{
           dbName.executeSql(
               'INSERT INTO schedule (name,lon,lat, date) VALUES(?,?,?,?)',[name,lon,lat,date],(trans, result)=>{
+                resolve(result._array)
+            }
+          )
+      }
+  )
+}
+  )
+}
+
+const updateSchedule = (name,date) =>{
+  console.log("called" + name + date)
+  return new Promise((resolve, reject)=>{
+  db.transaction(
+      dbName=>{
+          dbName.executeSql(
+              'UPDATE schedule SET date = ? WHERE name = ?',[date, name],(trans, result)=>{
+                console.log(result.rowsAffected + " result"),
+                resolve
+            }
+          )
+      }
+  )
+}
+  )
+}
+
+const insertLocation = (lon,lat) =>{
+  return new Promise((resolve, reject)=>{
+  db.transaction(
+      dbName=>{
+          dbName.executeSql(
+              'INSERT INTO location (lon,lat) VALUES(?,?,?,?)',[lon,lat],(trans, result)=>{
                 resolve(result._array)
             }
           )
@@ -98,6 +130,8 @@ db.transaction(name => {
     )
       : tableName == "schedule"? name.executeSql(
         'CREATE TABLE IF NOT EXISTS schedule (scheduleId INTEGER REFERENCES users(id), name TEXT, lon TEXT, lat TEXT, date TEXT)',[],(trans, result)=>{} 
+   ) : tableName == "schedule"? name.executeSql(
+    'CREATE TABLE IF NOT EXISTS location (locationId INTEGER REFERENCES users(id), lon TEXT, lat TEXT)',[],(trans, result)=>{} 
    ) : null
       }
 
@@ -121,6 +155,16 @@ const deleteSchedule = () =>
   db.transaction(name=>{
     name.executeSql(
     'DELETE FROM schedule',[],(trans, result)=>{console.log(trans + " " + result.rowsAffected + " we deleted all schedule")}
+    )
+  }
+
+  )
+}
+const deleteLocation = () =>
+{
+  db.transaction(name=>{
+    name.executeSql(
+    'DELETE FROM location',[],(trans, result)=>{console.log(trans + " " + result.rowsAffected + " we deleted all location")}
     )
   }
 
@@ -169,6 +213,17 @@ return new Promise((resolve, reject) => {
       }
     )
 }
+
+const getLocationFromDb = async () => {   
+  return new Promise((resolve, reject) => {
+      db.transaction(
+          name=>{
+           name.executeSql('SELECT * from location',[],(trans, result)=>{resolve(result.rows._array)})
+          }
+      )
+        }
+      )
+  }
 
 const getSchedule = async () => {   
   return new Promise((resolve, reject) => {
@@ -226,4 +281,4 @@ const getAvailability = async () => {
       )
   }
 
-export {getAvailability, createTable,deleteUsers, insertName, getNames, insertInterest,dropTable,getInterests, deleteInterests, turnForeignKeysOn, insertAvailability, deleteAvailability, insertSchedule, deleteSchedule, getSchedule} 
+export {getAvailability, createTable,deleteUsers, insertName, getNames, insertInterest,dropTable,getInterests, deleteInterests, turnForeignKeysOn, insertAvailability, deleteAvailability, insertSchedule, deleteSchedule, getSchedule, deleteLocation, insertLocation, getLocationFromDb, updateSchedule} 

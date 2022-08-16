@@ -1,12 +1,11 @@
 import React, { useState, useEffect , useRef} from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, SafeAreaView, FlatList, TouchableOpacity, Linking, useWindowDimensions , Animated, Image, ImageBackground} from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, SafeAreaView, FlatList, TouchableOpacity, Linking, useWindowDimensions , Animated, Image, ImageBackground, ScrollView, Button} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getNames, getSchedule, } from '../storage/Database';
-import MapView from 'react-native-maps';
-import { Marker } from 'react-native-maps';
+import { getNames, getSchedule, updateSchedule, } from '../storage/Database';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 
-const Home = ({ navigation }) => {
+const Settings = ({ navigation }) => {
   const [loading, setLoading] = useState("")
   const [data, setData] = useState([{name:"",lon:0,lat:0,date:""}])
   const [isMounted, setIsMounted] = useState(true)
@@ -15,8 +14,12 @@ const Home = ({ navigation }) => {
   const { width } = useWindowDimensions();
   const scrollX = useRef(new Animated.Value(0)).current
 
+  const [date,setDate] = useState(new Date())
   const [name,setName ] = useState("")
+  const [todaysDate,setTodaysDate] = useState(new Date())
+  const [modal,showModal] = useState(false)
 
+  const [currentEdit, setCurrentEdit] = useState("")
 
 
   const getLoginState = async () => {
@@ -33,17 +36,7 @@ const Home = ({ navigation }) => {
 
 
       getSchedule().then(
-        (res) => setData(res.sort(
-          (objA,objB)=>new Date(objA.date) -new Date(objB.date)
-        ), 
-        // console.log(res.sort(
-        //   (objA,objB)=>Number(objA.date) -Number(objB.date)
-        // ))
-        )
-      ).then(
-        ()=>getNames().then(
-          (res)=>setName(res[0].name)
-        )
+        (res) => setData(res)
       )
       setLoading(false)
 
@@ -54,7 +47,6 @@ const Home = ({ navigation }) => {
     , [])
   useEffect(
     () => {
-
     }
     , [loading, data])
 
@@ -73,17 +65,17 @@ const Home = ({ navigation }) => {
 
   const renderItem = (item, index) => {
     {
-      
-      if (item && index != 0) return <View style={{ width:300, alignItems:'center', justifyContent:'center',  height:'100%'}}>
+      // let item = item.name
+   return <View style={{ width:"100%", alignItems:'center', justifyContent:'center',  flex:1}}>
         <View style={styles.dateBtn} >
-          <View style = {{flex:.7, justifyContent:'space-around', alignItems:'center', margin: 10 }}>
-        <Text style={{ color: 'black', textAlign:'center', fontSize:18 }}>{item.name}
+          <View style = {{flex:1,flexDirection:'row',justifyContent:'space-around', alignItems:'center', width:'100%' }}>
+            <View style = {{flex:.9, flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
+              <Button title = "edit" onPress={()=>{showModal(true), setCurrentEdit(item.name)}}/>
+        <Text style={{ color: 'black', textAlign:'center', fontSize:14 }} numberOfLines={1}>{item.name.slice(0, 15) + "..."}
         </Text>
-<Text>{item.date}</Text>
+<Text style = {{fontSize:14}}>{item.date}</Text>
+</View>
         </View>
-        <TouchableOpacity style = {styles.nextBtn} onPress={() => Linking.openURL('http://maps.apple.com/maps?daddr=' + item.lat + ',' + item.lon)}>
-        <Text style = {{color:'#ffff', textAlign:'center'}}>take me there</Text> 
-      </TouchableOpacity>
         </View>
         
         </View>
@@ -92,37 +84,53 @@ const Home = ({ navigation }) => {
 
   if (loading) return <ActivityIndicator />
 
-  else return (
-    
-    <ImageBackground resizeMode={"cover"} source={require('../assets/date-dealer-home-background.png')} style={styles.container}>
-      <View style = {styles.topSpace}>
-      <Text style = {{color:'white', fontSize:20}}>{"Hello "}{ name + "!"}</Text>
-      <Text style = {{color:'white', fontSize:20}}>{"You and your partners' next date is:"}</Text>
+  else 
+  return (
+    <ImageBackground resizeMode={"cover"} source={require('../assets/settings-background.png')} style={styles.container}>
+          <View style = {styles.topSpace}>
+      <Text style = {{color:'black', fontSize:25}}>{"Settings"}</Text>
 
       </View>
-      <View style = {styles.mapViewContainer}>
 
-  <Text style = {styles.infoText1}>{data[0].name}</Text>
-   <Image source={require('../assets/icons8-outdoor-64.png')}/>
-   <Text style = {styles.infoText2}>{data[0].date}</Text> 
-   <TouchableOpacity style = {[styles.nextBtn, {width:150, height:50}]} onPress={() => Linking.openURL('http://maps.apple.com/maps?daddr=' + data[0].lat + ',' + data[0].lon)}>
-        <Text style = {{color:'#ffff', textAlign:'center'}}>take me there</Text> 
-      </TouchableOpacity>
-      </View>
-<Text style = {{color:'white', fontSize: 20, paddingTop:'10%'}}> upcoming dates:</Text>
+<View style = {{backgroundColor:'#ffff', height:'75%', width:'90%', borderRadius:15, alignItems:'center',marginBottom:'5%',}}>
+    <View style = {{height:'10%', justifyContent:'center', alignItems:'center'}}>
+    <Text style = {{fontSize: 20, }} >edit schedule</Text>
+    </View>
       <FlatList onViewableItemsChanged={viewableItemsChanged} onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }]
         , {
           useNativeDriver: false
         }
       )}
+      scrollEnabled={true}
       style ={styles.flatListContainer}
-      pagingEnabled={true} bounces={false} showsHorizontalScrollIndicator={true} horizontal data={data} renderItem={({item,index})=>renderItem(item,index)} />
+      contentContainerStyle={{flex:1,justifyContent:'space-around'}}
+      data={data} renderItem={({item,index})=>renderItem(item,index)}
+       />
+                 <DateTimePickerModal
+        isVisible={modal}
+        textColor={"black"}
+        mode="date"
+        date={date}
+        onConfirm={()=>{
+          let temp = data
+          updateSchedule(currentEdit, date.toDateString()), 
+          data.forEach((obj, index)=> {if(obj.name == currentEdit){temp[index].date = date.toDateString()}}),
+          setData(temp),
+          showModal(false)
+      }}
+        onCancel={()=>{showModal(false)}}
+        onChange={(date)=>setDate(date)}
+      />
+              <TouchableOpacity style = {styles.nextBtn} onPress={() => Linking.openURL('http://maps.apple.com/maps?daddr=' + item.lat + ',' + item.lon)}>
+        <Text style = {{color:'#ffff', textAlign:'center'}}>take me there</Text> 
+      </TouchableOpacity>
+</View>
       </ImageBackground>
   )
 }
 
 
-export default Home
+export default Settings
 
 const styles = StyleSheet.create({
   container: { 
@@ -154,24 +162,24 @@ flex:4
     height: '10%', justifyContent: 'center'
   },
   dateBtn: {
-    backgroundColor: '#FAF9F6',
-    height: '65%',
+    backgroundColor: '#EBEBEB',
+    height:50,
     justifyContent: 'center',
     width: '90%',
     borderRadius: 15,
     alignItems: 'center',
     shadowOffset:{width:1,height:2},
     shadowColor:'#6890E1',
-    shadowOpacity:.4,
-    shadowRadius:10,
-    elevation:1,
+    shadowOpacity:.3,
+    shadowRadius:5,
+    elevation:.5,
   },
   itemContainer: {
 
   }, mapViewContainer:{
-    height:'40%',
+    flex: 7,
     width:'80%',
-    backgroundColor:'#FAF9F6',
+    backgroundColor:'#ffff',
     alignItems:'center',
     justifyContent:'center',
     borderRadius:15,
@@ -183,15 +191,14 @@ flex:4
     justifyContent:'space-around'
   },
   topSpace:{
-    height:'20%',
+    flex:4,
     alignItems:'center',
-    justifyContent:'space-around',
-    padding:20,
-    marginTop:40
+    justifyContent:'center'
   },
   nextDateContainer:{justifyContent:'space-around',flex:.2, alignItems:'center'},
   flatListContainer:{
-    height:'30%',
+    height:'80%',
+    width:'100%'
   }, 
   infoText1:{
      fontWeight:'500',
@@ -209,11 +216,12 @@ flex:4
     borderRadius:20,
     justifyContent:'center',
     shadowColor:'blue',
-    width:'60%',
+    width:'40%',
     shadowOffset:{width:1,height:3},
     shadowOpacity:.5,
     shadowRadius:5,
     elevation:4,
+    marginBottom:20
 
   },
   middleBannerContainer:{
@@ -221,8 +229,8 @@ flex:4
     alignItems:'center',
     height:'10%',
     justifyContent:'flex-end',
-    backgroundColor:'red'
   }
+,
 
 
   
