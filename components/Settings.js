@@ -120,10 +120,8 @@ const Settings = ({ navigation }) => {
       }}
         onCancel={()=>{showModal(false)}}
         onChange={(date)=>setDate(date)}
+        minimumDate={new Date()}
       />
-              <TouchableOpacity style = {styles.nextBtn} onPress={() => Linking.openURL('http://maps.apple.com/maps?daddr=' + item.lat + ',' + item.lon)}>
-        <Text style = {{color:'#ffff', textAlign:'center'}}>take me there</Text> 
-      </TouchableOpacity>
 </View>
       </ImageBackground>
   )

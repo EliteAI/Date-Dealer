@@ -8,7 +8,7 @@ import { NativeBaseProvider } from "native-base";
 import Home from './components/Home'
 import P3_Questionaire from './components/P3_Questionaire';
 import P1_Questionaire from './components/P1_Questionaire';
-import { deleteUsers, createTable, dropTable, turnForeignKeysOn, getNames } from './storage/Database';
+import { createTable, dropTable, turnForeignKeysOn,  } from './storage/Database';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons'
 import Settings from './components/Settings';
@@ -21,7 +21,6 @@ export default function App() {
   const [appState, setAppState] = useState("questioning")
   const [loading, setLoading] = useState(true)
   const [isMounted, setIsMounted] = useState(true)
-  const [name, setName] = useState("")
 
 
 
@@ -33,22 +32,6 @@ export default function App() {
 
 
 
-
-
-  const getName = async () => {
-
-    try {
-      // setName(getNames())
-      getNames().then(
-        (res) => setName(res[0].name)
-
-      )
-
-    } catch (e) {
-      // saving error
-    }
-
-  }
 
   const getLoginState = async () => {
     try {
@@ -62,10 +45,8 @@ export default function App() {
   useEffect(() => {
     if (isMounted) {
       getLoginState().then(
-        () => getName().then(
+     
           () => setLoading(false)
-        )
-
       )
     }
   }, [])

@@ -10,13 +10,16 @@ const P2_Questionaire = ({ navigation }) => {
   const [name, setName] = useState("")
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState({ restaraunt: null, outdoor: null, shopping: null, physical: null, movies: null, concerts: null, lazy: null, creative: null, scenic: null })
-
+  const [partnerName,setPartnerName] = useState("")
 
 
   const getName = async () => {
     try {
       getNames().then(
-        (res) => setName(res[0].name)
+        (res) => {
+          setName(res[0].name),
+        setPartnerName(res[0].partnerName)
+        }
       )
       setLoading(false)
 
@@ -42,7 +45,7 @@ const P2_Questionaire = ({ navigation }) => {
     <ImageBackground resizeMode={"cover"} source={require('../assets/settings-background.png')} style={styles.container}>
 
         <View style={styles.questionHeaderContainer}>
-          <Text style = {{fontSize: 20}}>Select at least 3 activities of interest below.</Text>
+          <Text style = {{fontSize: 20, textAlign:'center'}}>{"Hi"} {name}{" & "}{partnerName + "."} {"Select at least 3 activities of interest below." }</Text>
         </View>
         <View style={styles.checkBoxContainer}>
           <CheckBox
@@ -163,7 +166,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   questionHeaderContainer: {
-    flex: .7,
+    flex: .5,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'space-around',

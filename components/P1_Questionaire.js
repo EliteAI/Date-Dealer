@@ -6,10 +6,10 @@ import { deleteUsers, insertName } from '../storage/Database';
 
 
 
-const nameSubmit = async (name, navigation) => {
+const nameSubmit = async (name, navigation,partnerName) => {
   try {
     deleteUsers()
-    insertName(name)
+    insertName(name,partnerName)
     navigation.push("p2_questionaire")
   } catch (e) {
     // saving error
@@ -18,6 +18,8 @@ const nameSubmit = async (name, navigation) => {
 
 const P1_Questionaire = ({ navigation }) => {
   const [name, setName] = useState("")
+  const [partnerName, setPartnerName] = useState("")
+
   return (
     <ImageBackground resizeMode={"cover"} source={require('../assets/settings-background.png')} style={styles.container}>
       <View style={styles.headerContainer}>
@@ -26,11 +28,11 @@ const P1_Questionaire = ({ navigation }) => {
   
       <View style={styles.inputContainer} >
         <TextInput placeholder='your name here' placeholderTextColor={'#FAF9F6'}  onChangeText={(givenName) => { setName(givenName) }} style={styles.input} />
-        <TextInput placeholder="your significant other's name here" placeholderTextColor={'#FAF9F6'}  onChangeText={(givenName) => { setName(givenName) }} style={styles.input} />
+        <TextInput placeholder="your significant other's name here" placeholderTextColor={'#FAF9F6'}  onChangeText={(givenName) => { setPartnerName(givenName) }} style={styles.input} />
 
       </View>
       <View style={styles.btnContainer}>
-        <TouchableOpacity style = {styles.nextBtn} onPress={() => { nameSubmit(name, navigation) }}><Text style = {{color:'white'}}>next</Text></TouchableOpacity>
+        <TouchableOpacity style = {styles.nextBtn} onPress={() => { nameSubmit(name, navigation, partnerName) }}><Text style = {{color:'white'}}>next</Text></TouchableOpacity>
       </View>
     </ImageBackground>
   );

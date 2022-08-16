@@ -124,7 +124,7 @@ const P3_Questionaire= ({navigation})=> {
                     schedule.forEach(
                     (obj)=>{
                       console.log(obj.properties.name)
-                      insertSchedule(obj.properties.name,obj.properties.lon,obj.properties.lat, obj.properties.scheduledDate)
+                      insertSchedule(obj.properties.name,obj.properties.lon,obj.properties.lat, obj.properties.scheduledDate, obj.properties.categories[1]!=null?obj.properties.categories[1] : obj.properties.categories[0])
                     }
                   )
                 }

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import * as SQLite from 'expo-sqlite';
 import { useBreakpointResolvedProps } from 'native-base';
 
-const db = SQLite.openDatabase("db.date-dealer-ios-development","1.0.0")
+const db = SQLite.openDatabase("db.date-dealer-alpha","1.0.0")
 
 const turnForeignKeysOn = ()=>
 {
@@ -20,12 +20,12 @@ const turnForeignKeysOn = ()=>
     )
 }
  
-const insertSchedule = (name,lon,lat,date) =>{
+const insertSchedule = (name,lon,lat,date, type) =>{
   return new Promise((resolve, reject)=>{
   db.transaction(
       dbName=>{
           dbName.executeSql(
-              'INSERT INTO schedule (name,lon,lat, date) VALUES(?,?,?,?)',[name,lon,lat,date],(trans, result)=>{
+              'INSERT INTO schedule (name,lon,lat, date, type) VALUES(?,?,?,?,?)',[name,lon,lat,date, type],(trans, result)=>{
                 resolve(result._array)
             }
           )
@@ -67,12 +67,13 @@ const insertLocation = (lon,lat) =>{
   )
 }
 
-const insertName = (name) =>{
+const insertName = (name,partnerName) =>{
+  console.log(partnerName)
     return new Promise((resolve, reject)=>{
     db.transaction(
         dbName=>{
             dbName.executeSql(
-                'INSERT INTO users (name) VALUES(?)',[name],(trans, result)=>{
+                'INSERT INTO users (name,partnerName) VALUES(?,?)',[name, partnerName],(trans, result)=>{
                   console.log(result.rowsAffected)
               
               }
@@ -124,12 +125,12 @@ db.transaction(name => {
     tableName == "interests"?name.executeSql(
       'CREATE TABLE IF NOT EXISTS intrst (interestsId INTEGER REFERENCES users(id), restaraunts TEXT, outdoor TEXT,shopping TEXT, physical TEXT, movies TEXT, concerts TEXT, lazy TEXT, creative TEXT, scenic TEXT)',[],(trans, result)=>{}
     ) : tableName == "users" ? name.executeSql(
-      'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)',[],(trans, result)=>{}
+      'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, partnerName TEXT)',[],(trans, result)=>{}
     ) : tableName == "availability"? name.executeSql(
       'CREATE TABLE IF NOT EXISTS availability (availabilityId INTEGER REFERENCES users(id), monday TEXT, tuesday TEXT, wednesday TEXT, thursday TEXT, friday, TEXT, saturday TEXT, sunday TEXT)',[],(trans, result)=>{} 
     )
       : tableName == "schedule"? name.executeSql(
-        'CREATE TABLE IF NOT EXISTS schedule (scheduleId INTEGER REFERENCES users(id), name TEXT, lon TEXT, lat TEXT, date TEXT)',[],(trans, result)=>{} 
+        'CREATE TABLE IF NOT EXISTS schedule (scheduleId INTEGER REFERENCES users(id), name TEXT, lon TEXT, lat TEXT, date TEXT, type TEXT)',[],(trans, result)=>{} 
    ) : tableName == "schedule"? name.executeSql(
     'CREATE TABLE IF NOT EXISTS location (locationId INTEGER REFERENCES users(id), lon TEXT, lat TEXT)',[],(trans, result)=>{} 
    ) : null
