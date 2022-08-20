@@ -71,9 +71,9 @@ const Settings = ({ navigation }) => {
           <View style = {{flex:1,flexDirection:'row',justifyContent:'space-around', alignItems:'center', width:'100%' }}>
             <View style = {{flex:.9, flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
               <Button title = "edit" onPress={()=>{showModal(true), setCurrentEdit(item.name)}}/>
-        <Text style={{ color: 'black', textAlign:'center', fontSize:14 }} numberOfLines={1}>{item.name.slice(0, 15) + "..."}
+        <Text style={{ color: 'black', textAlign:'center', fontSize:14, fontFamily:'Lato-Regular' }} numberOfLines={1}>{item.name.slice(0, 15) + "..."}
         </Text>
-<Text style = {{fontSize:14}}>{item.date}</Text>
+<Text style = {{fontSize:14, fontFamily:'Lato-Regular'}}>{item.date}</Text>
 </View>
         </View>
         </View>
@@ -88,13 +88,13 @@ const Settings = ({ navigation }) => {
   return (
     <ImageBackground resizeMode={"cover"} source={require('../assets/settings-background.png')} style={styles.container}>
           <View style = {styles.topSpace}>
-      <Text style = {{color:'black', fontSize:25}}>{"Settings"}</Text>
+      <Text style = {{color:'black', fontSize:25, fontFamily:'Lato-Medium'}}>{"Settings"}</Text>
 
       </View>
 
 <View style = {{backgroundColor:'#ffff', height:'75%', width:'90%', borderRadius:15, alignItems:'center',marginBottom:'5%',}}>
     <View style = {{height:'10%', justifyContent:'center', alignItems:'center'}}>
-    <Text style = {{fontSize: 20, }} >edit schedule</Text>
+    <Text style = {{fontSize: 20, fontFamily:'Lato-Regular'}} >edit schedule</Text>
     </View>
       <FlatList onViewableItemsChanged={viewableItemsChanged} onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }]
         , {
@@ -120,7 +120,7 @@ const Settings = ({ navigation }) => {
       }}
         onCancel={()=>{showModal(false)}}
         onChange={(date)=>setDate(date)}
-        minimumDate={new Date()}
+        // minimumDate={new Date()}
       />
 </View>
       </ImageBackground>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Button, TextInput, ActivityIndicator } from 'react-native';
+import { View, Text,StyleSheet, Button, TextInput, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -14,6 +14,9 @@ import Icon from 'react-native-vector-icons/Ionicons'
 import Settings from './components/Settings';
 import Info from './components/Info';
 import Review from './components/Review';
+import { useFonts } from 'expo-font';
+
+
 const Stack = createNativeStackNavigator();
 
 
@@ -57,32 +60,38 @@ export default function App() {
     }
   }, []);
 
+  const [fontsLoaded] = useFonts({
+    'Lato-Medium': require('./assets/fonts/Lato-Medium.ttf'),
+    'Lato-Regular': require('./assets/fonts/Lato-Regular.ttf'),
+    'Lato-Heavy': require('./assets/fonts/Lato-Heavy.ttf')
+
+  });
+
   function MyTabs() {
     const Tab = createBottomTabNavigator();
     return (
       <Tab.Navigator barStyle={styles.barStyle} screenOptions={{ headerShown:false}}   >
         <Tab.Screen name = "Home" component={Home} 
+        
         options={{
-          tabBarShowLabel: false,
+          
+          tabBarShowLabel: true,
           tabBarIcon: ({ color }) => (<Icon name="home" size={25}/>),
           unmountOnBlur:true
           
         }} />
         <Tab.Screen  name="Settings" component={Settings}
         options={{
-          tabBarShowLabel: false,
           tabBarIcon: ({ color }) => (<Icon name="cog" size={25}/>),
           
         }} />
         <Tab.Screen name="Share" component={Review}     options={{
-          tabBarShowLabel: false,
           tabBarIcon: ({ color }) => (<Icon name="share-social" size={25}/>),
           unmountOnBlur:true
 
         }}/>
         <Tab.Screen 
         name="Info" component={Info}  options={{
-          tabBarShowLabel: false,
           tabBarIcon: ({ color }) => (<Icon name="information-circle" size={25}/>),
           
         }}  />
@@ -93,29 +102,21 @@ export default function App() {
 
   // options={{headerBackVisible:false}}
   if (loading) { return <View style={styles.container}><ActivityIndicator /></View> }
-  else if (appState == "questioning" && !loading)
+  else if (!loading && fontsLoaded)
     return (
       <NativeBaseProvider>
         <NavigationContainer>
-          <Stack.Navigator screenOptions={{ "headerShown": false }}>
-
+          <Stack.Navigator initialRouteName={appState == "passed" ?'Date Dealer' : "p1_questionaire"} screenOptions={{ "headerShown": false }}>
             <Stack.Screen name="p1_questionaire" component={P1_Questionaire} />
             <Stack.Screen name="p2_questionaire" component={P2_Questionaire} />
             <Stack.Screen name="p3_questionaire" component={P3_Questionaire} />
+    
             <Stack.Screen name="Date Dealer" component={MyTabs} />
           </Stack.Navigator>
         </NavigationContainer>
       </NativeBaseProvider>
-    );
-  else return (
-    <NativeBaseProvider>
-      <NavigationContainer >
-        <Stack.Navigator screenOptions={{ "headerShown": false }}>
-          <Stack.Screen name={"Date Dealer"} component={MyTabs} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </NativeBaseProvider>
-  )
+    )
+  else return <View><Text>error</Text></View>
 
 }
 

@@ -26,7 +26,7 @@ const insertSchedule = (name,lon,lat,date, type) =>{
       dbName=>{
           dbName.executeSql(
               'INSERT INTO schedule (name,lon,lat, date, type) VALUES(?,?,?,?,?)',[name,lon,lat,date, type],(trans, result)=>{
-                resolve(result._array)
+                resolve(result)
             }
           )
       }
@@ -230,7 +230,7 @@ const getSchedule = async () => {
   return new Promise((resolve, reject) => {
       db.transaction(
           name=>{
-           name.executeSql('SELECT * from schedule',[],(trans, result)=>{console.log(JSON.stringify(result)),resolve(result.rows._array)})
+           name.executeSql('SELECT * from schedule',[],(trans, result)=>{resolve(result.rows._array)})
           }
       )
         }
