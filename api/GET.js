@@ -1,5 +1,5 @@
 import * as Location from 'expo-location';
-import { Alert } from 'react-native';
+import { Alert, Linking } from 'react-native';
 
 const shuffle = (events)=>{
   let random = Math.floor(Math.random() * events.length)
@@ -17,7 +17,6 @@ const randomizeArray = (events)=>{
   alreadyUsed.push(random);
   // shuffle
 
-    console.log("looping")
   random = shuffle(events)
 
 
@@ -94,8 +93,8 @@ for(const key in interests)
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert('Permissions Required', 'please grant location permissions in device settings in order to find events near you.', [
-        { text: 'CANCEL', onPress: () => console.log('OK Pressed') },
-        { text: 'OK', onPress: () => console.log('OK Pressed') },
+        { text: 'Cancel'},
+        { text: 'OK', onPress: () => Linking.openURL('app-settings:')},
       ]);      return false;
     }
     return await Location.getCurrentPositionAsync({});

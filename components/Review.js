@@ -77,7 +77,7 @@ const Review = ({ navigation }) => {
     
     <ImageBackground resizeMode={"cover"} source={require('../assets/date-dealer-home-background.png')} style={styles.container}>
       <View style = {styles.topSpace}>
-      <Text style = {{color:'black', fontSize:20,textAlign:'center'}}>{"Hi "}{ name + "! Thank ou so much for downloading the App."}  {"\n"}  {"\n"} {"If you would like to leave a review, please use one of the links below!"}</Text>
+      <Text style = {{color:'black', fontSize:20,textAlign:'center'}}>{"Hi "}{ name + "! Thank you so much for downloading the App."}  {"\n"}  {"\n"} {"If you would like to leave a review, please use one of the links below!"}</Text>
         <Button title = "leave a review on App Stop Store"/>
         <Button onPress = {()=>{openMessage()}} title = "share with friends"/>
       </View>

@@ -124,6 +124,7 @@ export default function App() {
         <Tab.Screen  name="Settings" component={Settings}
         options={{
           tabBarIcon: ({ color }) => (<Icon name="cog" size={25}/>),
+          unmountOnBlur:true
           
         }} />
         <Tab.Screen name="Share" component={Review}     options={{

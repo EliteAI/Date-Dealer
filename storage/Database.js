@@ -2,7 +2,7 @@ import { useState } from 'react';
 import * as SQLite from 'expo-sqlite';
 import { useBreakpointResolvedProps } from 'native-base';
 
-const db = SQLite.openDatabase("db.date-dealer-alpha","1.0.0")
+const db = SQLite.openDatabase("db.date-dealer-pre-prod","1.0.0")
 
 const turnForeignKeysOn = ()=>
 {

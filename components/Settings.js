@@ -1,12 +1,13 @@
 import React, { useState, useEffect , useRef} from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, SafeAreaView, FlatList, TouchableOpacity, Linking, useWindowDimensions , Animated, Image, ImageBackground, ScrollView, Button} from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, useWindowDimensions , Animated, Alert, ImageBackground, Button} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getNames, getSchedule, updateSchedule, } from '../storage/Database';
+import { deleteAvailability, deleteInterests, deleteLocation, deleteSchedule, getNames, getSchedule, updateSchedule, } from '../storage/Database';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { DotIndicator } from 'react-native-indicators';
 
 
 const Settings = ({ navigation }) => {
-  const [loading, setLoading] = useState("")
+  const [loading, setLoading] = useState(true)
   const [data, setData] = useState([{name:"",lon:0,lat:0,date:""}])
   const [isMounted, setIsMounted] = useState(true)
   const [appState, setAppState] = useState("questioning")
@@ -16,7 +17,6 @@ const Settings = ({ navigation }) => {
 
   const [date,setDate] = useState(new Date())
   const [name,setName ] = useState("")
-  const [todaysDate,setTodaysDate] = useState(new Date())
   const [modal,showModal] = useState(false)
 
   const [currentEdit, setCurrentEdit] = useState("")
@@ -35,7 +35,7 @@ const Settings = ({ navigation }) => {
 
   const getLoginState = async () => {
     try {
-      await AsyncStorage.getItem('appState').then((appState) => { appState == "passed" ? setAppState("passed") : setAppState("questioning") })
+      return await AsyncStorage.getItem('appState')
     } catch (e) {
       // saving error
     }
@@ -45,27 +45,51 @@ const Settings = ({ navigation }) => {
   useEffect(() => {
     setLoading(true)
     if (isMounted) {
-console.log("mounted")
 
       getSchedule().then(
-        (res) => setData(res.sort(
+        (res) => {
+          setData(res.sort(
           (objA, objB) => new Date(objA.date) - new Date(objB.date)
         ).filter((obj)=> {if(!isBeforeToday(obj.date)) return obj
       } )
       
         )
-      )
-      setLoading(false)
+      }
+      ).then(()=>{   
+     
+        getLoginState().then((res)=>
+        {
+          if(res == "passed")
+          {
+          setLoading(false)
+          }
+          else{
+            setTimeout(
+              function()
+            {
+              getSchedule().then(
+                (res) => {
+                  setData(res.sort(
+                  (objA, objB) => new Date(objA.date) - new Date(objB.date)
+                ).filter((obj)=> {if(!isBeforeToday(obj.date)) return obj
+              } )
+              
+                )
+              }
+              ).then(()=>setLoading(false))
+            }, 5000
+            )
+          }
+        })
+    }
+     )
 
 
     }
 
   }
-    , [])
-  useEffect(
-    () => {
-    }
-    , [loading, data])
+    , [isMounted])
+
 
   useEffect(() => {
     return () => {
@@ -73,6 +97,30 @@ console.log("mounted")
     }
   }, []);
 
+
+  const handleReShuffle = async ()=>{
+    async function move(){
+      await AsyncStorage.setItem('appState', "questioning")
+      navigation.navigate('p1_questionaire')
+    }
+    try {
+      Alert.alert('Confirm', 'Are you sure you want to reshuffle? You will lose all of your current dates and will be promted to re-enter your information.', [
+        
+        { text: 'OK', onPress:()=>{
+
+          deleteSchedule()
+          deleteAvailability()
+          deleteInterests()
+          deleteLocation()
+          move()
+     
+        }},
+        {text:'Cancel'}
+      ]);
+    } catch (e) {
+      // saving error
+    }
+  }
 
   const viewableItemsChanged = useRef(
     ({viewableItems})=>{
@@ -99,7 +147,19 @@ console.log("mounted")
     }
   };
 
-  if (loading) return <ActivityIndicator />
+  if (loading) return  <ImageBackground resizeMode={"cover"} source={require('../assets/settings-background.png')} style={styles.container}>
+  <View style = {styles.topSpace}>
+<Text style = {{color:'black', fontSize:25, fontFamily:'Lato-Medium'}}>{"Settings"}</Text>
+
+</View>
+
+<View style = {{backgroundColor:'#ffff', height:'75%', width:'90%', borderRadius:15, alignItems:'center',marginBottom:'5%'}}>
+<View style = {{height:'10%', justifyContent:'center', alignItems:'center'}}>
+<Text style = {{fontSize: 20, fontFamily:'Lato-Regular'}} >edit schedule</Text>
+</View>
+<DotIndicator size={8} color ="#2225CC"/>
+</View>
+</ImageBackground>
 
   else 
   return (
@@ -122,7 +182,10 @@ console.log("mounted")
       style ={styles.flatListContainer}
       contentContainerStyle={{flex:1,justifyContent:'space-around'}}
       data={data} renderItem={({item,index})=>renderItem(item,index)}
-       />
+       /> 
+           <TouchableOpacity style={[styles.nextBtn, { width: 150, height: 50 }]} onPress={() => {handleReShuffle()}}>
+          <Text style={{ color: '#ffff', textAlign: 'center' }}>re-shuffle</Text>
+        </TouchableOpacity>
                  <DateTimePickerModal
         isVisible={modal}
         textColor={"black"}

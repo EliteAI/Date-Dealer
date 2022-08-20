@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Alert, Text, StyleSheet, SafeAreaView, FlatList, TouchableOpacity, Linking, Modal,useWindowDimensions, Animated, Image, ImageBackground, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getNames, getSchedule, getInterests, getAvailability, deleteSchedule, insertSchedule } from '../storage/Database';
+import { getNames, getSchedule, getInterests, getAvailability, insertSchedule, deleteSchedule } from '../storage/Database';
 import * as Calendar from 'expo-calendar';
 import { getLocation, getData } from '../api/GET';
 import plantDates from '../Service/PlantDates';
@@ -92,7 +92,6 @@ const Home = ({ navigation }) => {
 
     else 
     {
-      console.log(appState + " appState")
         initDates()
  
     }
@@ -120,15 +119,16 @@ const Home = ({ navigation }) => {
   Alert.alert('Permissions Required', "Calendar Permissions are required to add events to our device's calendaer.", [
     {
       text: 'Deny',
-      onPress: () => console.log('Cancel Pressed'),
-      style: 'CANCEL',
+      style: 'Cancel',
     },
-    { text: 'Grant Permissions', onPress: () => Linking.openURL('app-settings:')
+    { text: 'Grant Permissions', onPress: () => {
+      Linking.openURL('app-settings:')
+      setLoading(true)
+    }
   },
   ]);
 
   const initDates = async()=>{
-    console.log(appState)
 let activities;
 let schedule;
 await queryInterests().then
@@ -236,8 +236,13 @@ await queryInterests().then
             {
                 schedule.forEach(
                 (obj)=>{
-                  console.log(obj.properties.scheduledDate)
-                  insertSchedule(obj.properties.name,obj.properties.lon,obj.properties.lat, obj.properties.scheduledDate.toString(), obj.properties.categories[1]!=null?obj.properties.categories[1] : obj.properties.categories[0])
+                  insertSchedule(obj.properties.name,obj.properties.lon,obj.properties.lat, obj.properties.scheduledDate.toString(), obj.properties.categories[1]!=null?obj.properties.categories[1] : obj.properties.categories[0]).then(
+                    (res)=> {   
+                         getSchedule().then(
+                      (res) =>{
+                  }
+                    )}
+                  )
                 }
               )
             }
@@ -276,9 +281,7 @@ const addToCalendar =()=>{
         console.log({ calendars });
       }
       else{
-        console.log(status)
         // createTwoButtonAlert()
-       console.log("no bueno")
       }
     })();
 
