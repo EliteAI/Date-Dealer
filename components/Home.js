@@ -137,6 +137,10 @@ await queryInterests().then
   getLocation().then(
   (loc) => {
     console.log("getting data")
+    if(!loc){setLoading("no permissions") 
+    AsyncStorage.setItem("appState", "finished")
+    return
+  }
     getData(loc, activities).then(
       (res) => {
         activities = res
@@ -218,14 +222,13 @@ await queryInterests().then
               console.log(JSON.stringify(schedule[0].properties))
               setData(schedule.sort(
                 (objA, objB) => new Date(objA.properties.scheduledDate) - new Date(objB.properties.scheduledDate)
-              ).map((obj)=> {if(!isBeforeToday(obj.properties.scheduledDate)) return {name: obj.properties.name, lon:obj.properties.lon, lat: obj.properties.lat, date: obj.properties.scheduledDate.toDateString(), type: obj.properties.categories[1]!=null?obj.properties.categories[1] : obj.properties.categories[0]}
+              ).map((obj)=> {if(!isBeforeToday(obj.properties.scheduledDate)) return {name: obj.properties.name, lon:obj.properties.lon, lat: obj.properties.lat, date: obj.properties.scheduledDate.toString(), type: obj.properties.categories[1]!=null?obj.properties.categories[1] : obj.properties.categories[0]}
             } )
             
               )
           
     
 
-              deleteSchedule()
             }
           )
           .then(
@@ -234,7 +237,7 @@ await queryInterests().then
                 schedule.forEach(
                 (obj)=>{
                   console.log(obj.properties.scheduledDate)
-                  insertSchedule(obj.properties.name,obj.properties.lon,obj.properties.lat, obj.properties.scheduledDate.toDateString(), obj.properties.categories[1]!=null?obj.properties.categories[1] : obj.properties.categories[0])
+                  insertSchedule(obj.properties.name,obj.properties.lon,obj.properties.lat, obj.properties.scheduledDate.toString(), obj.properties.categories[1]!=null?obj.properties.categories[1] : obj.properties.categories[0])
                 }
               )
             }
@@ -245,7 +248,12 @@ await queryInterests().then
           .then(
             () => {
        
-              AsyncStorage.setItem("appState","passed").then(()=>setLoading(false))
+              AsyncStorage.setItem("appState","passed").then(
+                () => getNames().then(
+                  (res) => {setName(res[0].name), setPartnerName(res[0].partnerName)
+                  }
+                )
+              ).then(()=>setLoading(false))
             }
 
           )
@@ -281,10 +289,10 @@ switch(state){
 case 0:return <ImageBackground resizeMode={"cover"} source={require('../assets/date-dealer-home-background.png')} style={styles.container}>
 <View style={styles.topSpace}>
   
-  {name.length > 0 ?<Text style={{ color: 'white', fontSize: 20 }}>{"Hello "}{name + "!"}</Text>
+  {!loading ?<Text style={{ color: 'white', fontSize: 20 }}>{"Hello "}{name + "!"}</Text>
     : null
   }
-  {name.length > 0 ?
+  {!loading  ?
   <Text style={{ color: 'white', fontSize: 20 }}>{"You and"} {partnerName}{"'s"} {"next date is:"}</Text>
     : null 
   }
@@ -307,8 +315,13 @@ case 0:return <ImageBackground resizeMode={"cover"} source={require('../assets/d
     <Text style={{ color: '#ffff', textAlign: 'center' }}>take me there</Text>
   </TouchableOpacity> : null
 }
+{loading == "no permissions" ?
+  <Text style={{ color: 'white', fontSize: 20, textAlign:'center' }}>{"you must grant permissions in app settings to continue"}</Text>
+    : null 
+  }
 </View>
-<Text style={{ color: 'white', fontSize: 20, paddingTop: '10%' }}> this month's dates:</Text>
+{!loading ?
+<Text style={{ color: 'white', fontSize: 20, paddingTop: '10%' }}> this month's dates:</Text> : null}
 {!loading ?
 <FlatList onViewableItemsChanged={viewableItemsChanged} onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }]
   , {
@@ -357,13 +370,17 @@ break;
   const renderItem = (item, index) => {
     {
 
-      if (item && index != 0) return <View style={{ width: 300, alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+      if (item && index != 0 && !loading) return <View style={{ width: 300, alignItems: 'center', justifyContent: 'center', height: '100%' }}>
         <View style={styles.dateBtn} >
           <View style={{ flex: .7, justifyContent: 'space-around', alignItems: 'center', margin: 10 }}>
             <Text style={styles.infoText1}>{item.name}
             </Text>
             <Text style = {styles.infoText2}>{item.date}</Text>
           </View>
+          {loading == "no permissions" ?
+  <Text style={{ color: 'white', fontSize: 20, textAlign:'center' }}>{"you must grant permissions to continue"}</Text>
+    : null 
+  }
           {
     !loading?
           <TouchableOpacity style={styles.nextBtn} onPress={() => Linking.openURL('http://maps.apple.com/maps?daddr=' + item.lat + ',' + item.lon)}>
@@ -377,7 +394,6 @@ break;
   };
 
   if(appState == "finished") return setMap(1)
-
   else return setMap(0)
 
 }

@@ -32,7 +32,7 @@ const Settings = ({ navigation }) => {
     return new Date(date).setHours(0,0,0,0) < today;
   }
 
-  
+
   const getLoginState = async () => {
     try {
       await AsyncStorage.getItem('appState').then((appState) => { appState == "passed" ? setAppState("passed") : setAppState("questioning") })
@@ -43,8 +43,9 @@ const Settings = ({ navigation }) => {
 
 
   useEffect(() => {
+    setLoading(true)
     if (isMounted) {
-
+console.log("mounted")
 
       getSchedule().then(
         (res) => setData(res.sort(

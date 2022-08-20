@@ -3,7 +3,7 @@ import { View, Text, StyleSheet,ImageBackground,  TouchableOpacity, Alert } from
 import { CheckBox } from 'react-native-elements'
 import { DotIndicator } from 'react-native-indicators';
 
-import {deleteAvailability, insertAvailability} from '../storage/Database';
+import {deleteAvailability, deleteSchedule, insertAvailability} from '../storage/Database';
 
 
 const P3_Questionaire= ({navigation})=> {
@@ -23,6 +23,7 @@ const P3_Questionaire= ({navigation})=> {
     )
     if(count > 0)
     {
+      await deleteSchedule()
     await insertAvailability(radioBtn)
    navigation.push("Date Dealer")   
     }
