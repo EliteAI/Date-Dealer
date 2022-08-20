@@ -23,7 +23,7 @@ const P3_Questionaire= ({navigation})=> {
     )
     if(count > 0)
     {
-      await deleteSchedule()
+    await deleteSchedule()
     await insertAvailability(radioBtn)
    navigation.push("Date Dealer")   
     }

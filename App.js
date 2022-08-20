@@ -16,6 +16,7 @@ import Info from './components/Info';
 import Review from './components/Review';
 import { useFonts } from 'expo-font';
 import { Asset } from 'expo-asset';
+import { Swipeable } from 'react-native-gesture-handler';
 
 
 const Stack = createNativeStackNavigator();
@@ -111,14 +112,15 @@ export default function App() {
   function MyTabs() {
     const Tab = createBottomTabNavigator();
     return (
-      <Tab.Navigator barStyle={styles.barStyle} screenOptions={{ headerShown:false}}   >
+      <Tab.Navigator barStyle={styles.barStyle} screenOptions={{ headerShown:false}} backBehavior={'order'}   >
         <Tab.Screen name = "Home" component={Home} 
         
         options={{
           
           tabBarShowLabel: true,
           tabBarIcon: ({ color }) => (<Icon name="home" size={25}/>),
-          unmountOnBlur:true
+          unmountOnBlur:true,
+          
           
         }} />
         <Tab.Screen  name="Settings" component={Settings}
@@ -132,6 +134,7 @@ export default function App() {
           unmountOnBlur:true
 
         }}/>
+      
         <Tab.Screen 
         name="Info" component={Info}  options={{
           tabBarIcon: ({ color }) => (<Icon name="information-circle" size={25}/>),
@@ -149,11 +152,11 @@ export default function App() {
       <NativeBaseProvider>
         <NavigationContainer>
           <Stack.Navigator initialRouteName={appState == "passed" ?'Date Dealer' : "p1_questionaire"} screenOptions={{ "headerShown": false }}>
-            <Stack.Screen name="p1_questionaire" component={P1_Questionaire} />
+            <Stack.Screen name="p1_questionaire" component={P1_Questionaire} options={{gestureEnabled:false}}/>
             <Stack.Screen name="p2_questionaire" component={P2_Questionaire} />
             <Stack.Screen name="p3_questionaire" component={P3_Questionaire} />
     
-            <Stack.Screen name="Date Dealer" component={MyTabs} />
+            <Stack.Screen name="Date Dealer" component={MyTabs} options={{gestureEnabled:false}} />
           </Stack.Navigator>
         </NavigationContainer>
       </NativeBaseProvider>

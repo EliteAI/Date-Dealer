@@ -88,7 +88,7 @@ const Settings = ({ navigation }) => {
     }
 
   }
-    , [isMounted])
+    , [])
 
 
   useEffect(() => {
