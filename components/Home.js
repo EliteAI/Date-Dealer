@@ -69,14 +69,13 @@ const Home = ({ navigation }) => {
       getSchedule().then(
         (res) =>{
           
-          // if(res.length < 1) AsyncStorage.setItem("appState", "finished")
+          if(res.length < 1) AsyncStorage.setItem("appState", "finished")
         setData(res.sort(
           (objA, objB) => new Date(objA.date) - new Date(objB.date)
         ).map((obj)=> {if(!isBeforeToday(obj.date)) return obj
       } )
       
         )
-        console.log(JSON.stringify(res))
     }
       ).then(
         () => getNames().then(
@@ -235,7 +234,7 @@ await queryInterests().then
                 schedule.forEach(
                 (obj)=>{
                   console.log(obj.properties.scheduledDate)
-                  insertSchedule(obj.properties.name,obj.properties.lon,obj.properties.lat, obj.properties.scheduledDate, obj.properties.categories[1]!=null?obj.properties.categories[1] : obj.properties.categories[0])
+                  insertSchedule(obj.properties.name,obj.properties.lon,obj.properties.lat, obj.properties.scheduledDate.toDateString(), obj.properties.categories[1]!=null?obj.properties.categories[1] : obj.properties.categories[0])
                 }
               )
             }
@@ -281,9 +280,14 @@ const addToCalendar =()=>{
 switch(state){
 case 0:return <ImageBackground resizeMode={"cover"} source={require('../assets/date-dealer-home-background.png')} style={styles.container}>
 <View style={styles.topSpace}>
-  <Text style={{ color: 'white', fontSize: 20 }}>{"Hello "}{name + "!"}</Text>
+  
+  {name.length > 0 ?<Text style={{ color: 'white', fontSize: 20 }}>{"Hello "}{name + "!"}</Text>
+    : null
+  }
+  {name.length > 0 ?
   <Text style={{ color: 'white', fontSize: 20 }}>{"You and"} {partnerName}{"'s"} {"next date is:"}</Text>
-
+    : null 
+  }
 </View>
 <View style={styles.mapViewContainer}>
 {
