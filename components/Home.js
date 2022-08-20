@@ -335,6 +335,9 @@ case 1: return <ImageBackground resizeMode={"cover"} source={require('../assets/
 break;
 }
   }
+
+  // #7C44B9
+  // #2225CC
   
   const handleReShuffle = async ()=>{
     try {
