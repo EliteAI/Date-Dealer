@@ -48,6 +48,7 @@ const Info = ({ navigation }) => {
 
   useEffect(() => {
     return () => {
+      
       setIsMounted(false);
     }
   }, []);

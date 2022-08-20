@@ -15,6 +15,7 @@ import Settings from './components/Settings';
 import Info from './components/Info';
 import Review from './components/Review';
 import { useFonts } from 'expo-font';
+import { Asset } from 'expo-asset';
 
 
 const Stack = createNativeStackNavigator();
@@ -36,6 +37,16 @@ export default function App() {
 
 
 
+  function cacheImages(images) {
+    return images.map(image => {
+      if (typeof image === 'string') {
+        return Image.prefetch(image);
+      } else {
+        return Asset.fromModule(image).downloadAsync();
+      }
+    });
+  }
+
   const getLoginState = async () => {
     try {
       await AsyncStorage.getItem('appState').then((appState) => { appState == "passed" ? setAppState("passed") : setAppState("questioning") })
@@ -44,12 +55,42 @@ export default function App() {
     }
   }
 
+  const loadResourcesAndDataAsync = async () =>{
+    try {
+      // SplashScreen.preventAutoHideAsync();
+
+      const imageAssets = cacheImages([
+        require("./assets/date-dealer-home-background.png"),
+        require("./assets/date-dealer_p1.png"),
+        require("./assets/movie.png"),
+        require("./assets/museum.png"),
+        require("./assets/outdoor.png"),
+        require("./assets/resturaunt.png"),
+        require("./assets/settings-background.png"),
+        require("./assets/shopping.png"),
+        require("./assets/splash.png"),
+        require("./assets/tourist.png")
+      ]);
+
+
+      await Promise.all([...imageAssets]);
+    } catch (e) {
+      // You might want to provide this error information to an error reporting service
+      console.warn(e);
+    } 
+    // finally {
+    //   setAppIsReady(true);
+    //   SplashScreen.hideAsync();
+    // }
+  }
 
   useEffect(() => {
+    
     if (isMounted) {
+      
       getLoginState().then(
      
-          () => setLoading(false)
+          () => loadResourcesAndDataAsync().then(()=>setLoading(false))
       )
     }
   }, [])
