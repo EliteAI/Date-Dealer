@@ -17,15 +17,6 @@ const Review = ({ navigation }) => {
 
 
 
-  const getLoginState = async () => {
-    try {
-      await AsyncStorage.getItem('appState').then((appState) => { appState == "passed" ? setAppState("passed") : setAppState("questioning") })
-    } catch (e) {
-      // saving error
-    }
-  }
-
-
   useEffect(() => {
     if (isMounted) {
 
@@ -67,7 +58,7 @@ const Review = ({ navigation }) => {
     if (isAvailable) {
         const { result } = await SMS.sendSMSAsync(
             [''],
-            'Hey! I found this really cool app called Date Dealer and I think you should give it a try.',
+            'Hey! I found this cool app called Date Dealer. You should give it a try.',
    
           );
               } 
@@ -79,30 +70,6 @@ const Review = ({ navigation }) => {
   }
 
 
-  const viewableItemsChanged = useRef(
-    ({viewableItems})=>{
-      setCurrentView(viewableItems[0].index)
-    }
-  ).current
-
-  const renderItem = (item, index) => {
-    {
-      
-      if (item && index != 0) return <View style={{ width:300, alignItems:'center', justifyContent:'center',  height:'100%'}}>
-        <View style={styles.dateBtn} >
-          <View style = {{flex:.7, justifyContent:'space-around', alignItems:'center', margin: 10 }}>
-        <Text style={{ color: 'black', textAlign:'center', fontSize:18 }}>{item.name}
-        </Text>
-<Text>{item.date}</Text>
-        </View>
-        <TouchableOpacity style = {styles.nextBtn} onPress={() => Linking.openURL('http://maps.apple.com/maps?daddr=' + item.lat + ',' + item.lon)}>
-        <Text style = {{color:'#ffff', textAlign:'center'}}>take me there</Text> 
-      </TouchableOpacity>
-        </View>
-        
-        </View>
-    }
-  };
 
   if (loading) return <ActivityIndicator />
 
@@ -127,7 +94,7 @@ const styles = StyleSheet.create({
   alignItems: 'center',
    width: '100%', 
   backgroundColor:'#7C44B9',
-  justifyContent:'space-around'
+  justifyContent:'space-around',
 
 },
 
@@ -185,7 +152,8 @@ flex:4
     justifyContent:'space-around',
     padding:20,
     backgroundColor:'white',
-    borderRadius:10
+    borderRadius:10,
+    margin:25
 
   },
   nextDateContainer:{justifyContent:'space-around',flex:.2, alignItems:'center'},

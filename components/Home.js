@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Alert, Text, StyleSheet, ActivityIndicator, SafeAreaView, FlatList, TouchableOpacity, Linking, Modal,useWindowDimensions, Animated, Image, ImageBackground, Button } from 'react-native';
+import { View, Alert, Text, StyleSheet, SafeAreaView, FlatList, TouchableOpacity, Linking, Modal,useWindowDimensions, Animated, Image, ImageBackground, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getNames, getSchedule, getInterests, getAvailability, deleteSchedule, insertSchedule } from '../storage/Database';
 import * as Calendar from 'expo-calendar';
 import { getLocation, getData } from '../api/GET';
 import plantDates from '../Service/PlantDates';
+import { DotIndicator } from 'react-native-indicators';
+
 
 const Home = ({ navigation }) => {
   const [loading, setLoading] = useState(true)
@@ -66,12 +68,15 @@ const Home = ({ navigation }) => {
       {
       getSchedule().then(
         (res) =>{
+          
+          // if(res.length < 1) AsyncStorage.setItem("appState", "finished")
         setData(res.sort(
           (objA, objB) => new Date(objA.date) - new Date(objB.date)
-        ).filter((obj)=> {if(!isBeforeToday(obj.date)) return obj
+        ).map((obj)=> {if(!isBeforeToday(obj.date)) return obj
       } )
       
         )
+        console.log(JSON.stringify(res))
     }
       ).then(
         () => getNames().then(
@@ -281,14 +286,23 @@ case 0:return <ImageBackground resizeMode={"cover"} source={require('../assets/d
 
 </View>
 <View style={styles.mapViewContainer}>
-
-  <Text style={styles.infoText1}>{data[0].name}</Text>
-  <Image source={data[0].type.includes("museum") ? require('../assets/museum.png') : data[0].type.includes("cinema") ? require('../assets/movie.png') : data[0].type.includes("restaurant") ? require('../assets/resturaunt.png') : data[0].type.includes("shopping") ? require('../assets/shopping.png') : data[0].type.includes("leisure") ? require('../assets/outdoor.png') : data[0].type.includes("tourism") ? require("../assets/tourist.png") : require("../assets/tourist.png")} />
-  <Text style={styles.infoText2}>{!loading ? "Days until: "+ getDaysUntil(data[0].date) : <ActivityIndicator/>}</Text>
-  <Text style={styles.infoText2}>{!loading ?data[0].date : <ActivityIndicator/>}</Text>
+{
+    !loading?
+  <Text style={styles.infoText1}>{data[0].name}</Text> : null 
+}
+  {
+    !loading? <Image source={data[0].type.includes("museum") ? require('../assets/museum.png') : data[0].type.includes("cinema") ? require('../assets/movie.png') : data[0].type.includes("restaurant") ? require('../assets/resturaunt.png') : data[0].type.includes("shopping") ? require('../assets/shopping.png') : data[0].type.includes("leisure") ? require('../assets/outdoor.png') : data[0].type.includes("tourism") ? require("../assets/tourist.png") : require("../assets/tourist.png")} />
+    : null
+}
+  <Text style={styles.infoText2}>{!loading ? "Days until: "+ getDaysUntil(data[0].date) :<DotIndicator size={8} color ="#2225CC"/>
+}</Text>
+  <Text style={styles.infoText2}>{!loading ?data[0].date : <DotIndicator size={8} color ="#2225CC"/>}</Text>
+  {
+    !loading?
   <TouchableOpacity style={[styles.nextBtn, { width: 150, height: 50 }]} onPress={() => Linking.openURL('http://maps.apple.com/maps?daddr=' + data[0].lat + ',' + data[0].lon)}>
     <Text style={{ color: '#ffff', textAlign: 'center' }}>take me there</Text>
-  </TouchableOpacity>
+  </TouchableOpacity> : null
+}
 </View>
 <Text style={{ color: 'white', fontSize: 20, paddingTop: '10%' }}> this month's dates:</Text>
 {!loading ?
@@ -299,7 +313,8 @@ case 0:return <ImageBackground resizeMode={"cover"} source={require('../assets/d
 )}
   style={styles.flatListContainer}
   pagingEnabled={true} bounces={false} showsHorizontalScrollIndicator={true} horizontal data={data} renderItem={({ item, index }) => renderItem(item, index)} /> :
-  <ActivityIndicator/>
+  <DotIndicator size={8} color ="#2225CC"/>
+
 }
 </ImageBackground>
 
@@ -342,9 +357,12 @@ break;
             </Text>
             <Text style = {styles.infoText2}>{item.date}</Text>
           </View>
+          {
+    !loading?
           <TouchableOpacity style={styles.nextBtn} onPress={() => Linking.openURL('http://maps.apple.com/maps?daddr=' + item.lat + ',' + item.lon)}>
             <Text style={{ color: '#ffff', textAlign: 'center' }}>take me there</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> : null
+          }
         </View>
 
       </View>

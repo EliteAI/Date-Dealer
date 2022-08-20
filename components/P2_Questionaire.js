@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, TextInput, ActivityIndicator, TouchableOpacity, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, Button, TextInput, TouchableOpacity, ImageBackground, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CheckBox } from 'react-native-elements'
 import { deleteInterests, getInterests, getNames, insertInterest } from '../storage/Database';
+import { DotIndicator } from 'react-native-indicators';
 
 
 
@@ -29,10 +30,26 @@ const P2_Questionaire = ({ navigation }) => {
   }
 
   const handleSubmit = async () => {
+let count = 0
+    Object.keys(data).forEach(key => {
+      if(data[key] != null){count++}
+    }
+    )
+
+    if(count > 2)
+    {
     deleteInterests()
     insertInterest(data)
-
     navigation.push("p3_questionaire")
+    }
+    else
+    {
+      Alert.alert('Oops', 'you must select at LEAST 3 interets.', [
+        
+        { text: 'OK'},
+      ]);
+    }
+
   }
 
   useEffect(() => {
@@ -40,7 +57,8 @@ const P2_Questionaire = ({ navigation }) => {
   }, []);
 
 
-  if (loading) return <ActivityIndicator></ActivityIndicator>
+  if (loading) return <ImageBackground resizeMode={"cover"} source={require('../assets/settings-background.png')} style={styles.container}><DotIndicator size={6} color ="#ffff"/></ImageBackground>
+
   else return (
     <ImageBackground resizeMode={"cover"} source={require('../assets/settings-background.png')} style={styles.container}>
 

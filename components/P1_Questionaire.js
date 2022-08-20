@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { View, Text, StyleSheet, Button, TextInput, ImageBackground, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Button, TextInput, ImageBackground, TouchableOpacity,Alert } from 'react-native';
 import { deleteUsers, insertName } from '../storage/Database';
 
 
@@ -8,9 +7,19 @@ import { deleteUsers, insertName } from '../storage/Database';
 
 const nameSubmit = async (name, navigation,partnerName) => {
   try {
+    if(name.length < 1 || partnerName.length < 1) {
+
+      Alert.alert('Oops', 'name cannot be empty.', [
+        
+        { text: 'OK', onPress: () => console.log('OK Pressed') },
+      ]);
+      return
+    }
+    else{
     deleteUsers()
     insertName(name,partnerName)
     navigation.push("p2_questionaire")
+    }
   } catch (e) {
     // saving error
   }

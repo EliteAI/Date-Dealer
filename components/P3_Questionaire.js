@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet,ImageBackground, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet,ImageBackground,  TouchableOpacity, Alert } from 'react-native';
 import { CheckBox } from 'react-native-elements'
+import { DotIndicator } from 'react-native-indicators';
 
 import {deleteAvailability, insertAvailability} from '../storage/Database';
 
@@ -11,10 +12,26 @@ const P3_Questionaire= ({navigation})=> {
 
 
   const handleButtonPress = async () =>{
+    let count = 0
     setLoading(true)
     deleteAvailability()
+
+    
+    Object.keys(radioBtn).forEach(key => {
+      if(radioBtn[key] != false){count++}
+    }
+    )
+    if(count > 0)
+    {
     await insertAvailability(radioBtn)
-   navigation.push("Date Dealer")    
+   navigation.push("Date Dealer")   
+    }
+    else{
+      Alert.alert('Oops', 'you must select at LEAST 1 available day.', [
+        
+        { text: 'OK'},
+      ]);
+    } 
        setLoading(false)
   
 
@@ -94,7 +111,8 @@ const P3_Questionaire= ({navigation})=> {
   );
   }
   else return     <ImageBackground resizeMode={"cover"} source={require('../assets/settings-background.png')} style={styles.container}>
-  <ActivityIndicator/></ImageBackground>
+  <DotIndicator size={6} color ="#ffff"/>
+</ImageBackground>
 }
 
 export default P3_Questionaire

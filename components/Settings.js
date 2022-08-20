@@ -22,6 +22,17 @@ const Settings = ({ navigation }) => {
   const [currentEdit, setCurrentEdit] = useState("")
 
 
+
+
+  const isBeforeToday = (date)=>{
+    const today = new Date();
+
+    today.setHours(0, 0, 0, 0);
+  
+    return new Date(date).setHours(0,0,0,0) < today;
+  }
+
+  
   const getLoginState = async () => {
     try {
       await AsyncStorage.getItem('appState').then((appState) => { appState == "passed" ? setAppState("passed") : setAppState("questioning") })
@@ -36,7 +47,12 @@ const Settings = ({ navigation }) => {
 
 
       getSchedule().then(
-        (res) => setData(res)
+        (res) => setData(res.sort(
+          (objA, objB) => new Date(objA.date) - new Date(objB.date)
+        ).filter((obj)=> {if(!isBeforeToday(obj.date)) return obj
+      } )
+      
+        )
       )
       setLoading(false)
 
@@ -92,7 +108,7 @@ const Settings = ({ navigation }) => {
 
       </View>
 
-<View style = {{backgroundColor:'#ffff', height:'75%', width:'90%', borderRadius:15, alignItems:'center',marginBottom:'5%',}}>
+<View style = {{backgroundColor:'#ffff', height:'75%', width:'90%', borderRadius:15, alignItems:'center',marginBottom:'5%'}}>
     <View style = {{height:'10%', justifyContent:'center', alignItems:'center'}}>
     <Text style = {{fontSize: 20, fontFamily:'Lato-Regular'}} >edit schedule</Text>
     </View>
@@ -120,7 +136,7 @@ const Settings = ({ navigation }) => {
       }}
         onCancel={()=>{showModal(false)}}
         onChange={(date)=>setDate(date)}
-        // minimumDate={new Date()}
+        minimumDate={new Date()}
       />
 </View>
       </ImageBackground>
