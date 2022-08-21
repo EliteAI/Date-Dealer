@@ -62,47 +62,42 @@ const Home = ({ navigation }) => {
     if (isMounted) {
       let state;
 
- 
+
 
       getLoginState().then((res) => {
         state = res;
 
 
-        AsyncStorage.getItem("appState").then((res)=>{if(res!="calculating" && res != "passed"){initDates()}else{console.log("no" + res)}})
-
-        if (state == "passed") {
-          getSchedule().then(
-            (res) => {
-
-              if (res.length < 1) AsyncStorage.setItem("appState", "finished")
-              setData(res.sort(
-                (objA, objB) => new Date(objA.date) - new Date(objB.date)
-              ).map((obj) => {
-                if (!isBeforeToday(obj.date)) return obj
-              })
-
-              )
-            }
-          ).then(
-            () => getNames().then(
+        AsyncStorage.getItem("appState").then((res) => {
+          if (res != "calculating" && res != "passed") { initDates() } else if(res!="calculating") {
+            getSchedule().then(
               (res) => {
-                setName(res[0].name), setPartnerName(res[0].partnerName)
+
+                if (res.length < 1) AsyncStorage.setItem("appState", "finished")
+                setData(res.sort(
+                  (objA, objB) => new Date(objA.date) - new Date(objB.date)
+                ).filter((obj) => {
+                  if (!isBeforeToday(obj.date)) return obj
+                })
+
+                )
               }
-            )
-          ).then(() => {
-            setLoading(false)
-          })
+            ).then(
+              () => getNames().then(
+                (res) => {
+                  setName(res[0].name), setPartnerName(res[0].partnerName)
+                }
+              )
+            ).then(() => {
+              setLoading(false)
+            })
+          }
+        })
 
-
-
-        }
-
-        
-  
       }
-    
+
       )
-  
+
     }
 
   }
@@ -139,13 +134,11 @@ const Home = ({ navigation }) => {
     let activities;
     let schedule;
     await AsyncStorage.setItem("appState", "calculating")
-    console.log("set")
     await queryInterests().then
       ((result) => {
         activities = result,
           getLocation().then(
             (loc) => {
-              console.log("getting data")
               if (!loc) {
                 setLoading("no permissions")
                 AsyncStorage.setItem("appState", "finished")
@@ -229,10 +222,9 @@ const Home = ({ navigation }) => {
                         }
                         )
 
-                        console.log(JSON.stringify(schedule[0].properties))
                         setData(schedule.sort(
                           (objA, objB) => new Date(objA.properties.scheduledDate) - new Date(objB.properties.scheduledDate)
-                        ).map((obj) => {
+                        ).filter((obj) => {
                           if (!isBeforeToday(obj.properties.scheduledDate)) return { name: obj.properties.name, lon: obj.properties.lon, lat: obj.properties.lat, date: obj.properties.scheduledDate.toString(), type: obj.properties.categories[1] != null ? obj.properties.categories[1] : obj.properties.categories[0] }
                         })
 
@@ -263,7 +255,7 @@ const Home = ({ navigation }) => {
                               setName(res[0].name), setPartnerName(res[0].partnerName)
                             }
                           )
-                        ).then(() => setLoading(false))
+                        ).then(() => { setLoading(false) })
                       }
 
                     )
@@ -277,7 +269,7 @@ const Home = ({ navigation }) => {
       )
   }
 
-  const setPassed = async ()=>{
+  const setPassed = async () => {
     await AsyncStorage.setItem("appState", "passed")
   }
 
@@ -315,6 +307,7 @@ const Home = ({ navigation }) => {
               <Text style={styles.infoText1}>{data[0].name}</Text> : null
           }
           {
+
             !loading ? <Image source={data[0].type.includes("museum") ? require('../assets/museum.png') : data[0].type.includes("cinema") ? require('../assets/movie.png') : data[0].type.includes("restaurant") ? require('../assets/resturaunt.png') : data[0].type.includes("shopping") ? require('../assets/shopping.png') : data[0].type.includes("leisure") ? require('../assets/outdoor.png') : data[0].type.includes("tourism") ? require("../assets/tourist.png") : require("../assets/tourist.png")} />
               : null
           }
@@ -323,7 +316,7 @@ const Home = ({ navigation }) => {
           <Text style={styles.infoText2}>{!loading ? data[0].date : <DotIndicator size={8} color="#2225CC" />}</Text>
           {
             !loading ?
-              <TouchableOpacity style={[styles.nextBtn, { width: 150, height: 50 }]} onPress={() => Linking.openURL('http://maps.apple.com/maps?daddr=' + data[0].lat + ',' + data[0].lon)}>
+              <TouchableOpacity style={[styles.nextBtn]} onPress={() => Linking.openURL('http://maps.apple.com/maps?daddr=' + data[0].lat + ',' + data[0].lon)}>
                 <Text style={{ color: '#ffff', textAlign: 'center' }}>take me there</Text>
               </TouchableOpacity> : null
           }
@@ -507,11 +500,11 @@ const styles = StyleSheet.create({
   nextBtn: {
     backgroundColor: '#36A2B7',
     alignItems: 'center',
-    height: 50,
+    height: 40,
     borderRadius: 20,
     justifyContent: 'center',
     shadowColor: 'blue',
-    width: '60%',
+    width: '50%',
     shadowOffset: { width: 1, height: 3 },
     shadowOpacity: .5,
     shadowRadius: 5,

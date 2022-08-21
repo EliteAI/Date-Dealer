@@ -106,6 +106,7 @@ const Settings = ({ navigation }) => {
     try {
       Alert.alert('Confirm', 'Are you sure you want to reshuffle? You will lose all of your current dates and will be promted to re-enter your information.', [
         
+        {text:'Cancel'},
         { text: 'OK', onPress:()=>{
 
           deleteSchedule()
@@ -115,7 +116,6 @@ const Settings = ({ navigation }) => {
           move()
      
         }},
-        {text:'Cancel'}
       ]);
     } catch (e) {
       // saving error
@@ -200,7 +200,7 @@ const Settings = ({ navigation }) => {
       }}
         onCancel={()=>{showModal(false)}}
         onChange={(date)=>setDate(date)}
-        minimumDate={new Date()}
+        // minimumDate={new Date()}
       />
 </View>
       </ImageBackground>

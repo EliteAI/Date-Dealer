@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Button, TextInput, ImageBackground, TouchableOpacity,Alert } from 'react-native';
-import { deleteUsers, insertName } from '../storage/Database';
+import { deleteSchedule, deleteUsers, insertName } from '../storage/Database';
 
 
 
@@ -17,6 +17,7 @@ const nameSubmit = async (name, navigation,partnerName) => {
     }
     else{
     deleteUsers()
+    deleteSchedule()
     insertName(name,partnerName)
     navigation.push("p2_questionaire")
     }
