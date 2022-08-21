@@ -48,7 +48,7 @@ const Home = ({ navigation }) => {
 
   const getLoginState = async () => {
     try {
-      await AsyncStorage.getItem('appState').then((app) => { app == "passed" ? setAppState("passed") : app == "questioning" ? setAppState("questioning") : setAppState("finished") })
+      await AsyncStorage.getItem('appState').then((app) => { app == "passed" ? setAppState("passed") : app == "questioning" ? setAppState("questioning") : console.log(appState + " what") })
       return await AsyncStorage.getItem('appState')
     } catch (e) {
       // saving error
@@ -70,7 +70,8 @@ const Home = ({ navigation }) => {
 
         AsyncStorage.getItem("appState").then((res) => {
           console.log(res)
-          if (res != "calculating" && res != "passed" && res != "finished") { initDates() } else  {
+          if (res != "calculating" && res != "passed" && res != "finished") { initDates() } else if(res!="calculating") {
+            setLoading(true)
             getSchedule().then(
               (res) => {
 
@@ -81,13 +82,11 @@ const Home = ({ navigation }) => {
                 })
 
                 if (orderedRes.length < 1) {
-                  console.log("small")
                   AsyncStorage.setItem("appState", "finished")
                   setAppState("finished")
                 }
                 else 
                 {
-                  console.log("big")
                   setData(res.sort(
                     (objA, objB) => new Date(objA.date) - new Date(objB.date)
                   ).filter((obj) => {
@@ -95,6 +94,7 @@ const Home = ({ navigation }) => {
                   })
   
                   )
+                  setAppState("passed")
                 }
       
               }
@@ -412,8 +412,9 @@ const Home = ({ navigation }) => {
     }
   };
 
-  if (appState == "finished") return setMap(1)
-  else return setMap(0)
+  {console.log(appState + " here")}
+  if (appState == "passed" || appState == "questioning" || appState == "calculating") return setMap(0)
+  else return setMap(1)
 
 }
 
