@@ -89,6 +89,7 @@ export default function App() {
     
     if (isMounted) {
       
+      AsyncStorage.setItem('appState','questioning')
       getLoginState().then(
      
           () => loadResourcesAndDataAsync().then(()=>setLoading(false))

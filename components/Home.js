@@ -156,7 +156,6 @@ const Home = ({ navigation }) => {
         activities = result,
           getLocation().then(
             (loc) => {
-              console.log("getting location")
               if (!loc) {
                 setLoading("no permissions")
                 AsyncStorage.setItem("appState", "finished")
@@ -412,7 +411,6 @@ const Home = ({ navigation }) => {
     }
   };
 
-  {console.log(appState + " here")}
   if (appState == "passed" || appState == "questioning" || appState == "calculating") return setMap(0)
   else return setMap(1)
 

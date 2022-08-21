@@ -201,7 +201,7 @@ const Settings = ({ navigation }) => {
       }}
         onCancel={()=>{showModal(false)}}
         onChange={(date)=>setDate(date)}
-        // minimumDate={new Date()}
+        minimumDate={new Date()}
       />
 </View>
       </ImageBackground>

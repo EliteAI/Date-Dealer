@@ -34,13 +34,11 @@ const insertSchedule = (name,lon,lat,date, type) =>{
 }
 
 const updateSchedule = (name,date) =>{
-  console.log("called" + name + date)
   return new Promise((resolve, reject)=>{
   db.transaction(
       dbName=>{
           dbName.executeSql(
               'UPDATE schedule SET date = ? WHERE name = ?',[date, name],(trans, result)=>{
-                console.log(result.rowsAffected + " result"),
                 resolve
             }
           )
@@ -66,13 +64,11 @@ const insertLocation = (lon,lat) =>{
 }
 
 const insertName = (name,partnerName) =>{
-  console.log(partnerName)
     return new Promise((resolve, reject)=>{
     db.transaction(
         dbName=>{
             dbName.executeSql(
                 'INSERT INTO users (name,partnerName) VALUES(?,?)',[name, partnerName],(trans, result)=>{
-                  console.log(result.rowsAffected)
               
               }
             )
@@ -153,7 +149,7 @@ const deleteSchedule = () =>
 {
   db.transaction(name=>{
     name.executeSql(
-    'DELETE FROM schedule',[],(trans, result)=>{console.log(trans + " " + result.rowsAffected + " we deleted all schedule")}
+    'DELETE FROM schedule',[],(trans, result)=>{}
     )
   }
 
@@ -163,7 +159,7 @@ const deleteLocation = () =>
 {
   db.transaction(name=>{
     name.executeSql(
-    'DELETE FROM location',[],(trans, result)=>{console.log(trans + " " + result.rowsAffected + " we deleted all location")}
+    'DELETE FROM location',[],(trans, result)=>{}
     )
   }
 
