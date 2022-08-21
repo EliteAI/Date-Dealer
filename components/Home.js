@@ -85,12 +85,13 @@ const Home = ({ navigation }) => {
             ).then(
               () => getNames().then(
                 (res) => {
-                  setName(res[0].name), setPartnerName(res[0].partnerName)
+                  setName(res[0].name), 
+                  setPartnerName(res[0].partnerName)
                 }
-              )
-            ).then(() => {
-              setLoading(false)
-            })
+              ).then(() => {
+                setLoading(false)
+              })
+            )
           }
         })
 
@@ -139,6 +140,7 @@ const Home = ({ navigation }) => {
         activities = result,
           getLocation().then(
             (loc) => {
+              console.log("getting location")
               if (!loc) {
                 setLoading("no permissions")
                 AsyncStorage.setItem("appState", "finished")
@@ -224,13 +226,11 @@ const Home = ({ navigation }) => {
 
                         setData(schedule.sort(
                           (objA, objB) => new Date(objA.properties.scheduledDate) - new Date(objB.properties.scheduledDate)
-                        ).filter((obj) => {
+                        ).map((obj) => {
                           if (!isBeforeToday(obj.properties.scheduledDate)) return { name: obj.properties.name, lon: obj.properties.lon, lat: obj.properties.lat, date: obj.properties.scheduledDate.toString(), type: obj.properties.categories[1] != null ? obj.properties.categories[1] : obj.properties.categories[0] }
                         })
 
                         )
-
-
 
                       }
                     )
@@ -521,4 +521,3 @@ const styles = StyleSheet.create({
 
 
 });
-

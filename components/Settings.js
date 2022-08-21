@@ -20,6 +20,7 @@ const Settings = ({ navigation }) => {
   const [modal,showModal] = useState(false)
 
   const [currentEdit, setCurrentEdit] = useState("")
+  const [currentIndex,setCurrentIndex] = useState(0);
 
 
 
@@ -135,7 +136,7 @@ const Settings = ({ navigation }) => {
         <View style={styles.dateBtn} >
           <View style = {{flex:1,flexDirection:'row',justifyContent:'space-around', alignItems:'center', width:'100%' }}>
             <View style = {{flex:.9, flexDirection:'row', justifyContent:'space-between', alignItems:'center'}}>
-              <Button title = "edit" onPress={()=>{showModal(true), setCurrentEdit(item.name)}}/>
+              <Button title = "edit" onPress={()=>{showModal(true), setCurrentEdit(item.name), setCurrentIndex(index)}}/>
         <Text style={{ color: 'black', textAlign:'center', fontSize:14, fontFamily:'Lato-Regular' }} numberOfLines={1}>{item.name.slice(0, 15) + "..."}
         </Text>
 <Text style = {{fontSize:14, fontFamily:'Lato-Regular'}}>{item.date}</Text>
@@ -194,7 +195,7 @@ const Settings = ({ navigation }) => {
         onConfirm={()=>{
           let temp = data
           updateSchedule(currentEdit, date.toDateString()), 
-          data.forEach((obj, index)=> {if(obj.name == currentEdit){temp[index].date = date.toDateString()}}),
+          temp[currentIndex].date = date.toDateString(),
           setData(temp),
           showModal(false)
       }}
