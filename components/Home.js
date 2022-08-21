@@ -48,7 +48,7 @@ const Home = ({ navigation }) => {
 
   const getLoginState = async () => {
     try {
-      await AsyncStorage.getItem('appState').then((appState) => { appState == "passed" ? setAppState("passed") : setAppState("questioning") })
+      await AsyncStorage.getItem('appState').then((app) => { app == "passed" ? setAppState("passed") : app == "questioning" ? setAppState("questioning") : setAppState("finished") })
       return await AsyncStorage.getItem('appState')
     } catch (e) {
       // saving error
@@ -69,20 +69,36 @@ const Home = ({ navigation }) => {
 
 
         AsyncStorage.getItem("appState").then((res) => {
-          if (res != "calculating" && res != "passed") { initDates() } else if(res!="calculating") {
+          console.log(res)
+          if (res != "calculating" && res != "passed" && res != "finished") { initDates() } else  {
             getSchedule().then(
               (res) => {
 
-                if (res.length < 1) AsyncStorage.setItem("appState", "finished")
-                setData(res.sort(
+                let orderedRes = res.sort(
                   (objA, objB) => new Date(objA.date) - new Date(objB.date)
                 ).filter((obj) => {
                   if (!isBeforeToday(obj.date)) return obj
                 })
 
-                )
+                if (orderedRes.length < 1) {
+                  console.log("small")
+                  AsyncStorage.setItem("appState", "finished")
+                  setAppState("finished")
+                }
+                else 
+                {
+                  console.log("big")
+                  setData(res.sort(
+                    (objA, objB) => new Date(objA.date) - new Date(objB.date)
+                  ).filter((obj) => {
+                    if (!isBeforeToday(obj.date)) return obj
+                  })
+  
+                  )
+                }
+      
               }
-            ).then(
+            ) .then(
               () => getNames().then(
                 (res) => {
                   setName(res[0].name), 
@@ -354,8 +370,6 @@ const Home = ({ navigation }) => {
     }
   }
 
-  // #7C44B9
-  // #2225CC
 
   const handleReShuffle = async () => {
     try {

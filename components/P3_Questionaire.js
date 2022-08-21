@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from 'react';
 import { View, Text, StyleSheet,ImageBackground,  TouchableOpacity, Alert } from 'react-native';
 import { CheckBox } from 'react-native-elements'
@@ -23,6 +24,7 @@ const P3_Questionaire= ({navigation})=> {
     )
     if(count > 0)
     {
+      await AsyncStorage.setItem("appState", "questioning")
     await deleteSchedule()
     await insertAvailability(radioBtn)
    navigation.push("Date Dealer")   
