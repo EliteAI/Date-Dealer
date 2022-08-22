@@ -1,6 +1,6 @@
 import * as SQLite from 'expo-sqlite';
 
-const db = SQLite.openDatabase("db.date-dealer-prod","1.0.0")
+const db = SQLite.openDatabase("db.date-dealer-production-us","1.0.3")
 
 const turnForeignKeysOn = ()=>
 {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Button, TextInput, ImageBackground, TouchableOpacity,Alert } from 'react-native';
+import { View, Text, StyleSheet, Button, TextInput, ImageBackground, TouchableOpacity,Alert,Dimensions } from 'react-native';
 import { deleteSchedule, deleteUsers, insertName } from '../storage/Database';
 
 
@@ -32,7 +32,7 @@ const P1_Questionaire = ({ navigation }) => {
 
   return (
     <ImageBackground resizeMode={"cover"} source={require('../assets/settings-background.png')} style={styles.container}>
-      <View style={styles.headerContainer}>
+      <View style={styles.headerContainer, { marginTop: Dimensions.get('window').height < 700 ? '5%' : '20%'}}>
         <Text style = {styles.headerText}>Welcome to Date Dealer! Enter you and your significant other's name below.</Text>
       </View>
   
@@ -73,10 +73,10 @@ const styles = StyleSheet.create({
   }
   ,
   headerContainer: {
-    flex: 1,
+    height:'10%',
     justifyContent: 'center',
     alignItems:'center',
-    marginTop:'5%',
+    marginTop: "5%",
   },
   inputContainer: {
     flex: 2,
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     shadowColor:'blue'
   },
   headerText:{
-    fontSize:20,
+    fontSize:"20rem",
     textAlign:'center',
     letterSpacing:.2,
     

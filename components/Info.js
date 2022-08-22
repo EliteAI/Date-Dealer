@@ -1,93 +1,15 @@
-import React, { useState, useEffect , useRef} from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, SafeAreaView, FlatList, TouchableOpacity, Linking, useWindowDimensions , Animated, Image, ImageBackground, ScrollView, Button} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getNames, getSchedule, } from '../storage/Database';
+import React from 'react';
+import { View, Text, StyleSheet,  Dimensions, ImageBackground, ScrollView} from 'react-native';
 
 
 
-const Info = ({ navigation }) => {
-  const [loading, setLoading] = useState("")
-  const [data, setData] = useState([{name:"",lon:0,lat:0,date:""}])
-  const [isMounted, setIsMounted] = useState(true)
-  const [appState, setAppState] = useState("questioning")
-  const [currentView, setCurrentView] = useState(0)
-  const { width } = useWindowDimensions();
-  const scrollX = useRef(new Animated.Value(0)).current
-
-  const [name,setName ] = useState("")
-
-
-
-  const getLoginState = async () => {
-    try {
-      await AsyncStorage.getItem('appState').then((appState) => { appState == "passed" ? setAppState("passed") : setAppState("questioning") })
-    } catch (e) {
-      // saving error
-    }
-  }
-
-
-  useEffect(() => {
-    if (isMounted) {
-
-
-      getSchedule().then(
-        (res) => setData(res)
-      )
-      setLoading(false)
-
-
-    }
-
-  }
-    , [])
-  useEffect(
-    () => {
-    }
-    , [loading, data])
-
-  useEffect(() => {
-    return () => {
-      
-      setIsMounted(false);
-    }
-  }, []);
-
-
-  const viewableItemsChanged = useRef(
-    ({viewableItems})=>{
-      setCurrentView(viewableItems[0].index)
-    }
-  ).current
-
-  const renderItem = (item, index) => {
-    {
-      
-   return <View style={{ width:"100%", alignItems:'center', justifyContent:'center',  flex:1}}>
-        <View style={styles.dateBtn} >
-          <View style = {{flex:1,flexDirection:'row',justifyContent:'space-around', alignItems:'center', width:'100%' }}>
-            <Button title='edit'/>
-            <View style = {{flex:.9, flexDirection:'row', justifyContent:'space-between'}}>
-        <Text style={{ color: 'black', textAlign:'center', fontSize:14 }} numberOfLines={1}>{item.name.slice(0, 15) + "..."}
-        </Text>
-<Text style = {{fontSize:14}}>{item.date}</Text>
-</View>
-        </View>
-        </View>
-        
-        </View>
-    }
-  };
-
-  if (loading) return <ActivityIndicator />
-
-  else return (
+const Info = ({ navigation }) => { return (
     <ImageBackground resizeMode={"cover"} source={require('../assets/settings-background.png')} style={styles.container}>
-          <View style = {styles.topSpace}>
-      <Text style = {{color:'black', fontSize:25, fontFamily:'Lato-Regular'}}>{"General Information"}</Text>
+          <View style = {styles.topSpace,{ marginTop: Dimensions.get('window').height < 700 ? '10%' : '20%'}}>
+      <Text style = {{color:'black', fontSize:"20rem", fontFamily:'Lato-Regular'}}>{"General Information"}</Text>
 
       </View>
-      <Text style = {{color:'white', fontSize:16, flex:1, justifyContent:'center'}}>{"v1.0.0"}</Text>
+      <Text style = {{color:'white', fontSize:16, flex:1, justifyContent:'center',marginTop: Dimensions.get('window').height < 700 ? '10%' : '20%'}}>{"v1.0.0"}</Text>
 
 <View style = {{backgroundColor:'#ffff', flex:10, width:'90%', borderRadius:15, alignItems:'center',marginBottom:'5%'}}>
   
@@ -238,9 +160,10 @@ flex:4
     justifyContent:'space-around'
   },
   topSpace:{
-    flex:4,
+  height:'10%',
     alignItems:'center',
-    justifyContent:'center'
+    justifyContent:'center',
+    marginTop:10
   },
   nextDateContainer:{justifyContent:'space-around',flex:.2, alignItems:'center'},
   flatListContainer:{

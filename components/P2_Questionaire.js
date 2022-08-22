@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Button, TextInput, TouchableOpacity, ImageBackground, Alert } from 'react-native';
+import { View, Text, StyleSheet, Button, TextInput, TouchableOpacity, ImageBackground, Alert,Dimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { CheckBox } from 'react-native-elements'
 import { deleteInterests, getInterests, getNames, insertInterest } from '../storage/Database';
@@ -62,8 +62,8 @@ let count = 0
   else return (
     <ImageBackground resizeMode={"cover"} source={require('../assets/settings-background.png')} style={styles.container}>
 
-        <View style={styles.questionHeaderContainer}>
-          <Text style = {{fontSize: 20, textAlign:'center'}}>{"Hi"} {name}{" & "}{partnerName + "."} {"Select at least 3 activities of interest below." }</Text>
+        <View style={styles.questionHeaderContainer, { marginTop: Dimensions.get('window').height < 700 ? '5%' : '20%'}}>
+          <Text style = {{fontSize: "20rem", textAlign:'center'}}>{"Hi"} {name}{" & "}{partnerName + "."} {"Select at least 3 activities of interest below." }</Text>
         </View>
         <View style={styles.checkBoxContainer}>
           <CheckBox
@@ -184,18 +184,17 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   questionHeaderContainer: {
-    flex: .5,
+    height:'20%',
     width: '100%',
     alignItems: 'center',
     justifyContent: 'space-around',
-    marginHorizontal:5
 
   },
   checkBoxContainer: {
     flex: 1,
     marginLeft:'4%',
     justifyContent:'center',
-    marginBottom:'10%'
+    marginTop:'10%',
   },
   contentContainer: {
     width: '100%',

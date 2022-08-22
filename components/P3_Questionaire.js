@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from 'react';
-import { View, Text, StyleSheet,ImageBackground,  TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet,ImageBackground,  TouchableOpacity, Alert, Dimensions } from 'react-native';
 import { CheckBox } from 'react-native-elements'
 import { DotIndicator } from 'react-native-indicators';
 
@@ -45,8 +45,8 @@ const P3_Questionaire= ({navigation})=> {
     <ImageBackground resizeMode={"cover"} source={require('../assets/settings-background.png')} style={styles.container}>
       <View style = {styles.contentContainer}>
 
-      <View style={styles.questionHeaderContainer}>
-      <Text style = {{fontSize:20, textAlign:'center'}}>on what days of the week are you generally available?</Text>
+      <View style={styles.questionHeaderContainer,{ marginTop: Dimensions.get('window').height < 700 ? '5%' : '25%'}}>
+      <Text style = {{fontSize:"20rem", textAlign:'center'}}>on what days of the week are you generally available?</Text>
       </View>
       <View style={styles.checkBoxContainer}>
         <CheckBox
@@ -145,12 +145,12 @@ const styles = StyleSheet.create({
     width: '100%'
   },
   questionHeaderContainer: {
-    flex: .5,
+    height:'15%',
     width: '100%',
     alignItems: 'center',
     justifyContent: 'space-around',
-    marginHorizontal:10,
     alignSelf:'center',
+    marginTop:5
 
   },
   checkBoxContainer: {

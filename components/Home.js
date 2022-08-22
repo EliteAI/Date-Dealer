@@ -11,7 +11,6 @@ import { DotIndicator } from 'react-native-indicators';
 const Home = ({ navigation }) => {
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState([{ name: "", lon: 0, lat: 0, date: "", type: "" }])
-  const [isMounted, setIsMounted] = useState(true)
   const [appState, setAppState] = useState("questioning")
   const [currentView, setCurrentView] = useState(0)
   const { width } = useWindowDimensions();
@@ -59,7 +58,6 @@ const Home = ({ navigation }) => {
 
 
   useEffect(() => {
-    if (isMounted) {
       let state;
 
 
@@ -69,7 +67,6 @@ const Home = ({ navigation }) => {
 
 
         AsyncStorage.getItem("appState").then((res) => {
-          console.log(res)
           if (res != "calculating" && res != "passed" && res != "finished") { initDates() } else if(res!="calculating") {
             setLoading(true)
             getSchedule().then(
@@ -115,10 +112,9 @@ const Home = ({ navigation }) => {
 
       )
 
-    }
 
   }
-    , [isMounted])
+    , [])
 
 
   useEffect(
@@ -127,11 +123,7 @@ const Home = ({ navigation }) => {
     }
     , [loading, data])
 
-  useEffect(() => {
-    return () => {
-      setIsMounted(false);
-    }
-  }, []);
+
 
   const createTwoButtonAlert = () =>
     Alert.alert('Permissions Required', "Calendar Permissions are required to add events to our device's calendaer.", [

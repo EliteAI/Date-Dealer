@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "date-dealer",
+    "name": "Date Dealer",
     "slug": "date-dealer",
-    "version": "1.0.1",
+    "version": "1.0.9",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",

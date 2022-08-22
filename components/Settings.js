@@ -1,5 +1,5 @@
 import React, { useState, useEffect , useRef} from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, useWindowDimensions , Animated, Alert, ImageBackground, Button} from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, useWindowDimensions , Animated, Alert, ImageBackground, Button, Dimensions} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { deleteAvailability, deleteInterests, deleteLocation, deleteSchedule, getNames, getSchedule, updateSchedule, } from '../storage/Database';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -45,7 +45,6 @@ const Settings = ({ navigation }) => {
 
   useEffect(() => {
     setLoading(true)
-    if (isMounted) {
 
       getSchedule().then(
         (res) => {
@@ -85,18 +84,9 @@ const Settings = ({ navigation }) => {
     }
      )
 
-
-    }
-
   }
     , [])
 
-
-  useEffect(() => {
-    return () => {
-      setIsMounted(false);
-    }
-  }, []);
 
 
   const handleReShuffle = async ()=>{
@@ -154,7 +144,7 @@ const Settings = ({ navigation }) => {
 
 </View>
 
-<View style = {{backgroundColor:'#ffff', height:'75%', width:'90%', borderRadius:15, alignItems:'center',marginBottom:'5%'}}>
+<View style = {{backgroundColor:'#ffff', height:'75%', width:'90%', borderRadius:15, alignItems:'center',marginBottom:'5%', marginTop:"10%"}}>
 <View style = {{height:'10%', justifyContent:'center', alignItems:'center'}}>
 <Text style = {{fontSize: 20, fontFamily:'Lato-Regular'}} >edit schedule</Text>
 </View>
@@ -165,7 +155,7 @@ const Settings = ({ navigation }) => {
   else 
   return (
     <ImageBackground resizeMode={"cover"} source={require('../assets/settings-background.png')} style={styles.container}>
-          <View style = {styles.topSpace}>
+          <View style = {styles.topSpace,{ marginTop: Dimensions.get('window').height < 700 ? '5%' : '20%'}}>
       <Text style = {{color:'black', fontSize:25, fontFamily:'Lato-Medium'}}>{"Settings"}</Text>
 
       </View>
@@ -270,9 +260,9 @@ flex:4
     justifyContent:'space-around'
   },
   topSpace:{
-    flex:4,
+    height:'10%',
     alignItems:'center',
-    justifyContent:'center'
+    justifyContent:'center',
   },
   nextDateContainer:{justifyContent:'space-around',flex:.2, alignItems:'center'},
   flatListContainer:{
