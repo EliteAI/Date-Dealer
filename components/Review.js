@@ -1,6 +1,5 @@
 import React, { useState, useEffect , useRef} from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, SafeAreaView, FlatList, TouchableOpacity, Linking, useWindowDimensions , Animated, Image, ImageBackground, Button} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getNames, getSchedule, } from '../storage/Database';
 import * as SMS from 'expo-sms';
 
@@ -8,10 +7,7 @@ const Review = ({ navigation }) => {
   const [loading, setLoading] = useState("")
   const [data, setData] = useState([{name:"",lon:0,lat:0,date:""}])
   const [isMounted, setIsMounted] = useState(true)
-  const [appState, setAppState] = useState("questioning")
-  const [currentView, setCurrentView] = useState(0)
-  const { width } = useWindowDimensions();
-  const scrollX = useRef(new Animated.Value(0)).current
+
 
   const [name,setName ] = useState("")
 

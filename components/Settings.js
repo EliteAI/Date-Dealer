@@ -4,6 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { deleteAvailability, deleteInterests, deleteLocation, deleteSchedule, getNames, getSchedule, updateSchedule, } from '../storage/Database';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { DotIndicator } from 'react-native-indicators';
+import * as Notifications from 'expo-notifications';
+
 
 
 const Settings = ({ navigation }) => {
@@ -113,6 +115,55 @@ const Settings = ({ navigation }) => {
     }
   }
 
+  const updateNotification = async()=>{
+    getSchedule().then(
+      (res) => {
+
+        let orderedRes = res.sort(
+          (objA, objB) => new Date(objA.date) - new Date(objB.date)
+        ).filter((obj) => {
+          if (!isBeforeToday(obj.date)) return obj
+        }
+        )
+
+        // cancel all notications
+        Notifications.cancelAllScheduledNotificationsAsync()
+        orderedRes.forEach((obj)=>{
+     
+                    Notifications.scheduleNotificationAsync({
+            
+            content: {
+              title: "your date in 3 days!",
+              body: 'You have a date at the ' + obj.name +  'on ' + obj.date + " .",
+              data: { data: 'goes here' },
+            
+              
+            },
+            
+            trigger: { seconds: Math.abs(new Date(new Date(obj.date).getDate()-3).getTime()- new Date().getTime())/1000},
+          })
+
+          Notifications.scheduleNotificationAsync({
+            
+            content: {
+              title: "your date is today!",
+              body: 'You have a date at the ' + obj.name +  "today.",
+              data: { data: 'goes here' },
+            
+              
+            },
+            
+            trigger: { seconds: Math.abs(new Date(obj.date).getTime() - new Date().getTime())/1000},
+          })
+
+
+            
+      }
+    )
+    }
+    )
+  }
+
   const viewableItemsChanged = useRef(
     ({viewableItems})=>{
       setCurrentView(viewableItems[0].index)
@@ -171,6 +222,7 @@ const Settings = ({ navigation }) => {
       )}
       scrollEnabled={true}
       style ={styles.flatListContainer}
+      keyExtractor={(_,id)=>id.toString()}
       contentContainerStyle={{flex:1,justifyContent:'space-around'}}
       data={data} renderItem={({item,index})=>renderItem(item,index)}
        /> 
@@ -188,6 +240,7 @@ const Settings = ({ navigation }) => {
           temp[currentIndex].date = date.toDateString(),
           setData(temp),
           showModal(false)
+          updateNotification()
       }}
         onCancel={()=>{showModal(false)}}
         onChange={(date)=>setDate(date)}

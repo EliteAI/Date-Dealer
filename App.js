@@ -8,7 +8,7 @@ import { NativeBaseProvider } from "native-base";
 import Home from './components/Home'
 import P3_Questionaire from './components/P3_Questionaire';
 import P1_Questionaire from './components/P1_Questionaire';
-import { createTable, dropTable, turnForeignKeysOn,  } from './storage/Database';
+import { createTable, turnForeignKeysOn,  } from './storage/Database';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons'
 import Settings from './components/Settings';
@@ -96,6 +96,7 @@ export default function App() {
   
   }, [])
 
+  
  
 
   const [fontsLoaded] = useFonts({

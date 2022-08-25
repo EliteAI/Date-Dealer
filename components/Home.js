@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Alert, Text, StyleSheet, SafeAreaView, FlatList, TouchableOpacity, Linking, Modal, useWindowDimensions, Animated, Image, ImageBackground, Button } from 'react-native';
+import { View, Alert, Text, StyleSheet, FlatList, TouchableOpacity, Linking, useWindowDimensions, Animated, Image, ImageBackground, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getNames, getSchedule, getInterests, getAvailability, insertSchedule, deleteSchedule } from '../storage/Database';
 import * as Calendar from 'expo-calendar';
 import { getLocation, getData } from '../api/GET';
 import plantDates from '../Service/PlantDates';
 import { DotIndicator } from 'react-native-indicators';
+import * as Notifications from 'expo-notifications';
+
 
 
 const Home = ({ navigation }) => {
@@ -13,21 +15,21 @@ const Home = ({ navigation }) => {
   const [data, setData] = useState([{ name: "", lon: 0, lat: 0, date: "", type: "" }])
   const [appState, setAppState] = useState("questioning")
   const [currentView, setCurrentView] = useState(0)
-  const { width } = useWindowDimensions();
   const scrollX = useRef(new Animated.Value(0)).current
   const [status, requestPermission] = Calendar.useCalendarPermissions();
 
   const [name, setName] = useState("")
   const [partnerName, setPartnerName] = useState("")
-  const [modal, setModal] = useState(false)
-
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
 
 
 
   const getDaysUntil = (date) => {
     var date1 = new Date();
     var date2 = new Date(date);
-    var timeDifference = date2.getTime() - date1.getTime();
     return Math.ceil((date2 - date1) / 8.64e7);
   }
 
@@ -120,9 +122,118 @@ const Home = ({ navigation }) => {
   useEffect(
     () => {
 
+      schedulePushNotification()
     }
     , [loading, data])
 
+  
+  
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: false,
+        shouldSetBadge: false,
+      }),
+    });
+  
+    useEffect(() => {
+      registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+  
+      notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+        setNotification(notification);
+      });
+  
+      responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+        console.log(response);
+      });
+  
+      return () => {
+        Notifications.removeNotificationSubscription(notificationListener.current);
+        Notifications.removeNotificationSubscription(responseListener.current);
+      };
+    }, []);
+  
+    async function registerForPushNotificationsAsync() {
+      let token;
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return;
+      }
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log(token);
+  
+  
+      if (Platform.OS === 'android') {
+        await Notifications.setNotificationChannelAsync('default', {
+          name: 'default',
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: '#FF231F7C',
+        });
+      }
+  
+      return token;
+    }
+  
+    async function schedulePushNotification() {
+      AsyncStorage.getItem('appState').then((res) => {
+        if (res == "passed") {
+          getSchedule().then(
+            (res) => {
+  
+              let orderedRes = res.sort(
+                (objA, objB) => new Date(objA.date) - new Date(objB.date)
+              ).filter((obj) => {
+                if (!isBeforeToday(obj.date)) return obj
+              }
+              )
+  
+              // cancel all notications
+              Notifications.cancelAllScheduledNotificationsAsync()
+              orderedRes.forEach((obj)=>{
+           
+                          Notifications.scheduleNotificationAsync({
+                  
+                  content: {
+                    title: "your date in 3 days!",
+                    body: 'You have a date at the ' + obj.name +  'on ' + obj.date + " .",
+                    data: { data: 'goes here' },
+                  
+                    
+                  },
+                  
+                  trigger: { seconds: Math.abs(new Date(new Date(obj.date).getDate()-3).getTime()- new Date().getTime())/1000},
+                })
+
+                Notifications.scheduleNotificationAsync({
+            
+                  content: {
+                    title: "your date is today!",
+                    body: 'You have a date at the ' + obj.name +  "today.",
+                    data: { data: 'goes here' },
+                  
+                    
+                  },
+                  
+                  trigger: { seconds: Math.abs(new Date(obj.date).getTime() - new Date().getTime())/1000},
+                })
+              
+                
+            }
+          )
+          }
+          )
+        
+        }
+      }
+      )
+    }
 
 
   const createTwoButtonAlert = () =>
@@ -340,6 +451,7 @@ const Home = ({ navigation }) => {
               useNativeDriver: false
             }
           )}
+          keyExtractor={(_,id)=>id.toString()}
             style={styles.flatListContainer}
             pagingEnabled={true} bounces={false} showsHorizontalScrollIndicator={true} horizontal data={data} renderItem={({ item, index }) => renderItem(item, index)} /> :
           <DotIndicator size={8} color="#2225CC" />
