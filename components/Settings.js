@@ -140,7 +140,7 @@ const Settings = ({ navigation }) => {
               
             },
             
-            trigger: { seconds: Math.abs(new Date(new Date(obj.date).getDate()-3).getTime()- new Date().getTime())/1000},
+            trigger: { seconds: Math.abs((new Date(obj.date).setDate(new Date(obj.date).getDate()-3))- new Date().getTime())/1000},
           })
 
           Notifications.scheduleNotificationAsync({

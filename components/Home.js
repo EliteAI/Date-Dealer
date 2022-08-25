@@ -198,7 +198,7 @@ const Home = ({ navigation }) => {
               Notifications.cancelAllScheduledNotificationsAsync()
               orderedRes.forEach((obj)=>{
            
-                          Notifications.scheduleNotificationAsync({
+                         Notifications.scheduleNotificationAsync({
                   
                   content: {
                     title: "your date in 3 days!",
@@ -208,7 +208,7 @@ const Home = ({ navigation }) => {
                     
                   },
                   
-                  trigger: { seconds: Math.abs(new Date(new Date(obj.date).getDate()-3).getTime()- new Date().getTime())/1000},
+                  trigger: { seconds: Math.abs((new Date(obj.date).setDate(new Date(obj.date).getDate()-3))- new Date().getTime())/1000},
                 })
 
                 Notifications.scheduleNotificationAsync({
