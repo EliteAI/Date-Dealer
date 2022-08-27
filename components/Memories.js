@@ -5,10 +5,10 @@ import { deleteAvailability, deleteInterests, deleteLocation, deleteSchedule, ge
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { DotIndicator } from 'react-native-indicators';
 import * as Notifications from 'expo-notifications';
+import Timeline from 'react-native-timeline-flatlist'
 
 
-
-const Settings = ({ navigation }) => {
+const Memories = ({ navigation }) => {
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState([{name:"",lon:0,lat:0,date:""}])
   const [isMounted, setIsMounted] = useState(true)
@@ -24,7 +24,14 @@ const Settings = ({ navigation }) => {
   const [currentEdit, setCurrentEdit] = useState("")
   const [currentIndex,setCurrentIndex] = useState(0);
 
-
+  const test = [
+        {time: '9/25/22', title: 'Olive Garden', description: 'Event 1 Description'},
+        {time: '9/2/22', title: 'Arboretum', description: 'Event 2 Description'},
+        {time: '12:00', title: 'Observatorium', description: 'Event 3 Description'},
+        {time: '14:00', title: 'Corpus Christi', description: 'Event 4 Description'},
+        {time: '16:30', title: 'Manuels ATX', description: 'Event 5 Description'}
+      ]
+    
 
 
   const isBeforeToday = (date)=>{
@@ -130,11 +137,6 @@ const Settings = ({ navigation }) => {
         Notifications.cancelAllScheduledNotificationsAsync()
         orderedRes.forEach((obj)=>{
           let futureDate = new Date(obj.date)
-          let dayOf = new Date(obj.date)
-          dayOf.setHours(8)
-          dayOf.setMinutes(0)
-          dayOf.setSeconds(0)
-
           futureDate.setDate(new Date(obj.date).getDate()-3)
           futureDate.setHours(8)
           futureDate.setMinutes(0)
@@ -156,13 +158,13 @@ const Settings = ({ navigation }) => {
             
             content: {
               title: "your date is today!",
-              body: 'You have a date at the ' + obj.name +  " today.",
+              body: 'You have a date at the ' + obj.name +  "today.",
               data: { data: 'goes here' },
             
               
             },
             
-            trigger: { seconds: Math.abs(dayOf.getTime() - new Date().getTime())/1000},
+            trigger: { seconds: Math.abs(new Date(obj.date).getTime() - new Date().getTime())/1000},
           })
 
 
@@ -200,7 +202,7 @@ const Settings = ({ navigation }) => {
 
   if (loading) return  <ImageBackground resizeMode={"cover"} source={require('../assets/settings-background.png')} style={styles.container}>
   <View style = {styles.topSpace}>
-<Text style = {{color:'black', fontSize:25, fontFamily:'Lato-Medium'}}>{"Settings"}</Text>
+<Text style = {{color:'black', fontSize:25, fontFamily:'Lato-Medium'}}>{"Memories"}</Text>
 
 </View>
 
@@ -216,52 +218,27 @@ const Settings = ({ navigation }) => {
   return (
     <ImageBackground resizeMode={"cover"} source={require('../assets/settings-background.png')} style={styles.container}>
           <View style = {styles.topSpace,{ marginTop: Dimensions.get('window').height < 700 ? '5%' : '20%'}}>
-      <Text style = {{color:'black', fontSize:25, fontFamily:'Lato-Medium'}}>{"Settings"}</Text>
+      <Text style = {{color:'black', fontSize:25, fontFamily:'Lato-Medium'}}>{"Memories"}</Text>
 
       </View>
 
-<View style = {{backgroundColor:'#ffff', height:'75%', width:'90%', borderRadius:15, alignItems:'center',marginBottom:'5%'}}>
+<View style = {{backgroundColor:'#ffff', height:'75%', width:'95%', borderRadius:15, alignItems:'center',marginBottom:'5%',marginTop:'10%'}}>
     <View style = {{height:'10%', justifyContent:'center', alignItems:'center'}}>
     <Text style = {{fontSize: 20, fontFamily:'Lato-Regular'}} >edit schedule</Text>
     </View>
-      <FlatList onViewableItemsChanged={viewableItemsChanged} onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }]
-        , {
-          useNativeDriver: false
-        }
-      )}
-      scrollEnabled={true}
-      style ={styles.flatListContainer}
-      keyExtractor={(_,id)=>id.toString()}
-      contentContainerStyle={{flex:1,justifyContent:'space-around'}}
-      data={data} renderItem={({item,index})=>renderItem(item,index)}
-       /> 
-           <TouchableOpacity style={[styles.nextBtn, { width: 150, height: 50 }]} onPress={() => {handleReShuffle()}}>
-          <Text style={{ color: '#ffff', textAlign: 'center' }}>re-shuffle</Text>
-        </TouchableOpacity>
-                 <DateTimePickerModal
-        isVisible={modal}
-        textColor={"black"}
-        mode="date"
-        date={date}
-        onConfirm={()=>{
-          let temp = data
-          updateSchedule(currentEdit, date.toDateString()), 
-          temp[currentIndex].date = date.toDateString(),
-          setData(temp),
-          showModal(false)
-          updateNotification()
-      }}
-        onCancel={()=>{showModal(false)}}
-        onChange={(date)=>setDate(date)}
-        minimumDate={new Date()}
-      />
+    <Timeline
+          data={test}
+          style={{width:300}}
+          timeContainerStyle={{width:100}}
+        />
+    
 </View>
       </ImageBackground>
   )
 }
 
 
-export default Settings
+export default Memories
 
 const styles = StyleSheet.create({
   container: { 

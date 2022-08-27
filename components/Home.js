@@ -197,7 +197,16 @@ const Home = ({ navigation }) => {
               // cancel all notications
               Notifications.cancelAllScheduledNotificationsAsync()
               orderedRes.forEach((obj)=>{
-           
+                let futureDate = new Date(obj.date)
+                let dayOf = new Date(obj.date)
+                dayOf.setHours(8)
+                dayOf.setMinutes(0)
+                dayOf.setSeconds(0)
+
+                futureDate.setDate(new Date(obj.date).getDate()-3)
+                futureDate.setHours(8)
+                futureDate.setMinutes(0)
+                futureDate.setSeconds(0)
                          Notifications.scheduleNotificationAsync({
                   
                   content: {
@@ -208,20 +217,20 @@ const Home = ({ navigation }) => {
                     
                   },
                   
-                  trigger: { seconds: Math.abs((new Date(obj.date).setDate(new Date(obj.date).getDate()-3))- new Date().getTime())/1000},
+                  trigger: { seconds: Math.abs(futureDate- new Date().getTime())/1000},
                 })
 
                 Notifications.scheduleNotificationAsync({
             
                   content: {
                     title: "your date is today!",
-                    body: 'You have a date at the ' + obj.name +  "today.",
+                    body: 'You have a date at the ' + obj.name +  " today.",
                     data: { data: 'goes here' },
                   
                     
                   },
                   
-                  trigger: { seconds: Math.abs(new Date(obj.date).getTime() - new Date().getTime())/1000},
+                  trigger: { seconds: Math.abs(dayOf.getTime() - new Date().getTime())/1000},
                 })
               
                 

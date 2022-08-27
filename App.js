@@ -16,6 +16,7 @@ import Info from './components/Info';
 import Review from './components/Review';
 import { useFonts } from 'expo-font';
 import { Asset } from 'expo-asset';
+import Memories from './components/Memories';
 
 
 const Stack = createNativeStackNavigator();
@@ -116,6 +117,16 @@ export default function App() {
           
           tabBarShowLabel: true,
           tabBarIcon: ({ color }) => (<Icon name="home" size={25}/>),
+          unmountOnBlur:true,
+          
+          
+        }} />
+                <Tab.Screen name = "Memories" component={Memories} 
+        
+        options={{
+          
+          tabBarShowLabel: true,
+          tabBarIcon: ({ color }) => (<Icon name="heart-circle-outline" size={25}/>),
           unmountOnBlur:true,
           
           
