@@ -1,36 +1,63 @@
 import React, { useState, useEffect , useRef} from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, useWindowDimensions , Animated, Alert, ImageBackground, Button, Dimensions} from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, Alert, ImageBackground, Button, Dimensions,Image} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { deleteAvailability, deleteInterests, deleteLocation, deleteSchedule, getNames, getSchedule, updateSchedule, } from '../storage/Database';
+import { deleteAvailability, deleteInterests, deleteLocation, deleteSchedule, getSchedule, updateSchedule, } from '../storage/Database';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { DotIndicator } from 'react-native-indicators';
 import * as Notifications from 'expo-notifications';
 import Timeline from 'react-native-timeline-flatlist'
-
+import Modal from 'react-native-modal'
+import * as ImagePicker from 'expo-image-picker';
+import { TextInput } from 'react-native-paper';
 
 const Memories = ({ navigation }) => {
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState([{name:"",lon:0,lat:0,date:""}])
-  const [isMounted, setIsMounted] = useState(true)
-  const [appState, setAppState] = useState("questioning")
   const [currentView, setCurrentView] = useState(0)
-  const { width } = useWindowDimensions();
-  const scrollX = useRef(new Animated.Value(0)).current
 
-  const [date,setDate] = useState(new Date())
-  const [name,setName ] = useState("")
+  const [modalAddMemory, setModalAddMemory] = useState(false)
   const [modal,showModal] = useState(false)
+  const [image, setImage] = useState(null);
 
   const [currentEdit, setCurrentEdit] = useState("")
   const [currentIndex,setCurrentIndex] = useState(0);
+  const [rogueTest,setRogueTest] = useState(null)
+  const [memorycolumns,setMemoryColumns] = useState([{
+    time:"9/25/2022",
+    title:"Fudruckers",
+    description:<Button title ="open capsule"></Button>
+  },
+  {
+    time:"9/25/2022",
+    title:"Manuels ATX",
+    description:<Button title ="open capsule"></Button>
+  }
 
-  const test = [
-        {time: '9/25/22', title: 'Olive Garden', description: 'Event 1 Description'},
-        {time: '9/2/22', title: 'Arboretum', description: 'Event 2 Description'},
-        {time: '12:00', title: 'Observatorium', description: 'Event 3 Description'},
-        {time: '14:00', title: 'Corpus Christi', description: 'Event 4 Description'},
-        {time: '16:30', title: 'Manuels ATX', description: 'Event 5 Description'}
-      ]
+])
+const [memories,setMemories] = useState([])
+const [title,setTitle] = useState("")
+const [description,setDescription] = useState("")
+
+const pickImage = async () => {
+  // No permissions request is necessary for launching the image library
+  let result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.All,
+    allowsEditing: true,
+    aspect: [4, 3],
+    quality: 1,
+  });
+
+  console.log(result.uri);
+
+  if (!result.cancelled) {
+    setImage(result.uri);
+    setRogueTest(result.uri)
+  }
+  // AsyncStorage.setItem("memories", JSON.stringify(memories))
+
+};
+
+  const [test,setTest] = useState([])
     
 
 
@@ -55,6 +82,7 @@ const Memories = ({ navigation }) => {
   useEffect(() => {
     setLoading(true)
 
+    AsyncStorage.getItem("memories").then((res)=>setTest(JSON.parse(res)))
       getSchedule().then(
         (res) => {
           setData(res.sort(
@@ -175,6 +203,27 @@ const Memories = ({ navigation }) => {
     )
   }
 
+  const handleAddNewMemory = ()=>{
+   setModalAddMemory(true)
+    
+  }
+
+  const handleSave = async ()=>{
+    let m =[
+      {
+        time:"9/25/2022",
+        title: title,
+        description:description,
+        image: image
+      }
+    ]
+     AsyncStorage.setItem("memories", JSON.stringify(m)).then(
+      ()=>AsyncStorage.getItem("memories").then(
+        (res)=>setTest(JSON.parse(res))
+      )
+     )
+   }
+
   const viewableItemsChanged = useRef(
     ({viewableItems})=>{
       setCurrentView(viewableItems[0].index)
@@ -208,7 +257,7 @@ const Memories = ({ navigation }) => {
 
 <View style = {{backgroundColor:'#ffff', height:'75%', width:'90%', borderRadius:15, alignItems:'center',marginBottom:'5%', marginTop:"10%"}}>
 <View style = {{height:'10%', justifyContent:'center', alignItems:'center'}}>
-<Text style = {{fontSize: 20, fontFamily:'Lato-Regular'}} >edit schedule</Text>
+<Text style = {{fontSize: 20, fontFamily:'Lato-Regular'}} >Timeline</Text>
 </View>
 <DotIndicator size={8} color ="#2225CC"/>
 </View>
@@ -218,19 +267,52 @@ const Memories = ({ navigation }) => {
   return (
     <ImageBackground resizeMode={"cover"} source={require('../assets/settings-background.png')} style={styles.container}>
           <View style = {styles.topSpace,{ marginTop: Dimensions.get('window').height < 700 ? '5%' : '20%'}}>
-      <Text style = {{color:'black', fontSize:25, fontFamily:'Lato-Medium'}}>{"Memories"}</Text>
+      <Text style = {{color:'black', fontSize:"25rem", fontFamily:'Lato-Medium'}}>{"Memories"}</Text>
 
       </View>
 
 <View style = {{backgroundColor:'#ffff', height:'75%', width:'95%', borderRadius:15, alignItems:'center',marginBottom:'5%',marginTop:'10%'}}>
     <View style = {{height:'10%', justifyContent:'center', alignItems:'center'}}>
-    <Text style = {{fontSize: 20, fontFamily:'Lato-Regular'}} >edit schedule</Text>
+    <Text style = {{fontSize: 20, fontFamily:'Lato-Regular'}} >Timeline</Text>
     </View>
     <Timeline
           data={test}
-          style={{width:300}}
-          timeContainerStyle={{width:100}}
+          style={{width:300, marginBottom:'10%'}}
+          timeContainerStyle={{width:'100%'}}
+          timeStyle={{width:100,textAlign:'flex-start'}}
+          options = {{horizontal:false,  }}
+          lineWidth ={2}
+          detailContainerStyle = {{
+        alignItems:'flex-end',
+        width:'100%'
+      }}
+    
+      
         />
+              <Modal isVisible={modalAddMemory} backdropColor={"white"} backdropOpacity={1}  style={styles.modalView} animationInTiming={300} hideModalContentWhileAnimating={true}>
+
+        <View style={{flex:1,justifyContent:'center', alignItems:'center'}}>
+          <Image style = {{width:300,height:300}} source={ test!= null? {uri:test[0].image} : require("../assets/icon.png")}/>
+                  <View style={{flex:.1,justifyContent:'center', alignItems:'center', flexDirection:'row'}}>
+          <Text>title: </Text>
+          <TextInput onChangeText={(text)=>setTitle(text)} style={styles.input} />
+          </View>
+          <View style={{flex:.1,justifyContent:'center', alignItems:'center', flexDirection:'row'}}>
+          <Text>description: </Text>
+          <TextInput onChangeText={(text)=>setDescription(text)} style={styles.input} />
+          </View>
+        <Button title = "add picture" onPress={()=>{pickImage()}}></Button>
+        <Button title = "date of" onPress={()=>{pickImage()}}></Button>
+          <Button title = "cancel" onPress={()=>{setModalAddMemory(false)}}></Button>
+          <Button title = "save" onPress={()=>{handleSave()}}></Button>
+        </View>
+      </Modal>
+                   <TouchableOpacity style={[styles.nextBtn, { width: '55%', height: 50 }]} onPress={() => {}}>
+          <Text style={{ color: '#ffff', textAlign: 'center' }}>add to an existing memory</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.nextBtn, { width: '55%', height: 50 }]} onPress={() => {handleAddNewMemory()}}>
+          <Text style={{ color: '#ffff', textAlign: 'center' }}>add new memory</Text>
+        </TouchableOpacity>
     
 </View>
       </ImageBackground>
@@ -339,6 +421,19 @@ flex:4
     justifyContent:'flex-end',
   }
 ,
+modalView:{
+  justifyContent:'center',
+},
+input: {
+  width: '80%',
+  height: 50,
+  borderRadius: 10,
+  backgroundColor:'transparent',
+  borderBottomWidth:1,
+  borderColor:'#FAF9F6',
+  textAlign:'center',
+  color:'white'
+}
 
 
   

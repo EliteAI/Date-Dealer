@@ -1,5 +1,12 @@
 {
   "expo": {
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you save memories"
+        }
+      ]],
     "name": "Date Dealer",
     "slug": "date-dealer",
     "version": "1.4.0",
@@ -19,8 +26,14 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.nmason197.datedealer"
-    },
+      "bundleIdentifier": "com.nmason197.datedealer",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "This app usages device location in order to find events and establishments near the user's current whereabouts.",
+        "NSLocationAlwaysUsageDescription": "This app usages device location in order to find events and establishments near the user's current whereabouts. You may grant background location permissions, but only foreground location permissions are required.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app usages device location in order to find events and establishments near the user's current whereabouts. You may grant background location permissions, but only foreground location permissions are required."
+
+
+      }    },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",

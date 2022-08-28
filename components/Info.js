@@ -6,7 +6,7 @@ import { View, Text, StyleSheet,  Dimensions, ImageBackground, ScrollView} from 
 const Info = ({ navigation }) => { return (
     <ImageBackground resizeMode={"cover"} source={require('../assets/settings-background.png')} style={styles.container}>
           <View style = {styles.topSpace,{ marginTop: Dimensions.get('window').height < 700 ? '10%' : '20%'}}>
-      <Text style = {{color:'black', fontSize:"20rem", fontFamily:'Lato-Regular'}}>{"General Information"}</Text>
+      <Text style = {{color:'black', fontSize:"25rem", fontFamily:'Lato-Medium'}}>{"General Information"}</Text>
 
       </View>
       <Text style = {{color:'white', fontSize:16, flex:1, justifyContent:'center',marginTop: Dimensions.get('window').height < 700 ? '10%' : '20%'}}>{"v1.4.0"}</Text>

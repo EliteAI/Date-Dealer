@@ -199,12 +199,12 @@ const Home = ({ navigation }) => {
               orderedRes.forEach((obj)=>{
                 let futureDate = new Date(obj.date)
                 let dayOf = new Date(obj.date)
-                dayOf.setHours(8)
+                dayOf.setHours(2)
                 dayOf.setMinutes(0)
                 dayOf.setSeconds(0)
 
                 futureDate.setDate(new Date(obj.date).getDate()-3)
-                futureDate.setHours(8)
+                futureDate.setHours(2)
                 futureDate.setMinutes(0)
                 futureDate.setSeconds(0)
                          Notifications.scheduleNotificationAsync({

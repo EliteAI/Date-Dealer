@@ -131,12 +131,12 @@ const Settings = ({ navigation }) => {
         orderedRes.forEach((obj)=>{
           let futureDate = new Date(obj.date)
           let dayOf = new Date(obj.date)
-          dayOf.setHours(8)
+          dayOf.setHours(2)
           dayOf.setMinutes(0)
           dayOf.setSeconds(0)
 
           futureDate.setDate(new Date(obj.date).getDate()-3)
-          futureDate.setHours(8)
+          futureDate.setHours(2)
           futureDate.setMinutes(0)
           futureDate.setSeconds(0)
                     Notifications.scheduleNotificationAsync({
@@ -216,11 +216,11 @@ const Settings = ({ navigation }) => {
   return (
     <ImageBackground resizeMode={"cover"} source={require('../assets/settings-background.png')} style={styles.container}>
           <View style = {styles.topSpace,{ marginTop: Dimensions.get('window').height < 700 ? '5%' : '20%'}}>
-      <Text style = {{color:'black', fontSize:25, fontFamily:'Lato-Medium'}}>{"Settings"}</Text>
+      <Text style = {{color:'black', fontSize:"25rem", fontFamily:'Lato-Medium'}}>{"Settings"}</Text>
 
       </View>
 
-<View style = {{backgroundColor:'#ffff', height:'75%', width:'90%', borderRadius:15, alignItems:'center',marginBottom:'5%'}}>
+<View style = {{backgroundColor:'#ffff', height:'75%', width:'90%', borderRadius:15, alignItems:'center',marginBottom:'5%', marginTop:'10%'}}>
     <View style = {{height:'10%', justifyContent:'center', alignItems:'center'}}>
     <Text style = {{fontSize: 20, fontFamily:'Lato-Regular'}} >edit schedule</Text>
     </View>
