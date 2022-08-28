@@ -2,7 +2,7 @@ import React, { useState, useEffect , useRef} from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, Alert, ImageBackground, Button, Dimensions,Image} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { deleteAvailability, deleteInterests, deleteLocation, deleteSchedule, getSchedule, updateSchedule, } from '../storage/Database';
-import DateTimePickerModal from "react-native-modal-datetime-picker";
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { DotIndicator } from 'react-native-indicators';
 import * as Notifications from 'expo-notifications';
 import Timeline from 'react-native-timeline-flatlist'
@@ -19,9 +19,11 @@ const Memories = ({ navigation }) => {
   const [modal,showModal] = useState(false)
   const [image, setImage] = useState(null);
 
+
   const [currentEdit, setCurrentEdit] = useState("")
   const [currentIndex,setCurrentIndex] = useState(0);
   const [rogueTest,setRogueTest] = useState(null)
+  const [time, setTime] = useState(new Date())
   const [memorycolumns,setMemoryColumns] = useState([{
     time:"9/25/2022",
     title:"Fudruckers",
@@ -209,21 +211,59 @@ const pickImage = async () => {
     
   }
 
+  const handleDeleteMemory = ()=>{
+
+    Alert.alert('Confirm', 'Are you sure you want to delete all memories? This action cannot be undone.', [
+        
+      {text:'Cancel'},
+      { text: 'OK', onPress:()=>{
+
+        setLoading(true)
+        AsyncStorage.removeItem("memories").then(()=>setTest([])).then(()=>setLoading(false))
+      }},
+    ]);
+     
+   }
   const handleSave = async ()=>{
     setLoading(true)
-    let m =[
+    let m
+    setModalAddMemory(false)
+    await AsyncStorage.getItem("memories").then((res)=>{
+      if(res == null)
       {
-        time:"9/25/2022",
-        title: title,
-        description:description,
-        image: image
+        let m =[
+          {
+            time:time.toDateString(),
+            title: title,
+            description:description,
+            image: image
+          }
+        ]
+        AsyncStorage.setItem("memories", JSON.stringify(m)).then(
+          ()=>AsyncStorage.getItem("memories").then(
+            (res)=>setTest(JSON.parse(res))
+          )
+         ).then(()=>setLoading(false))
       }
-    ]
-     AsyncStorage.setItem("memories", JSON.stringify(m)).then(
-      ()=>AsyncStorage.getItem("memories").then(
-        (res)=>setTest(JSON.parse(res))
-      )
-     ).then(()=>setLoading(false))
+      else{
+        m = [...JSON.parse(res)]
+    
+        m.push( {
+            time:time.toDateString(),
+            title: title,
+            description:description,
+            image: image
+          })
+      console.log(JSON.stringify(res))  
+        AsyncStorage.setItem("memories", JSON.stringify(m)).then(
+          ()=>AsyncStorage.getItem("memories").then(
+            (res)=>setTest(JSON.parse(res))
+          )
+         ).then(()=>setLoading(false))
+      }
+    })
+    
+
    }
 
   const viewableItemsChanged = useRef(
@@ -265,8 +305,7 @@ const pickImage = async () => {
 </View>
 </ImageBackground>
 
-  else 
-  return (
+  else if(test != null) return (
     <ImageBackground resizeMode={"cover"} source={require('../assets/settings-background.png')} style={styles.container}>
           <View style = {styles.topSpace,{ marginTop: Dimensions.get('window').height < 700 ? '5%' : '20%'}}>
       <Text style = {{color:'black', fontSize:"25rem", fontFamily:'Lato-Medium'}}>{"Memories"}</Text>
@@ -293,26 +332,72 @@ const pickImage = async () => {
         />
               <Modal isVisible={modalAddMemory} backdropColor={"white"} backdropOpacity={1}  style={styles.modalView} animationInTiming={300} hideModalContentWhileAnimating={true}>
 
-        <View style={{flex:1,justifyContent:'center', alignItems:'center'}}>
-          <Image style = {{width:300,height:300}} source={ test!= null? {uri:test[0].image} : require("../assets/icon.png")}/>
-                  <View style={{flex:.1,justifyContent:'center', alignItems:'center', flexDirection:'row'}}>
-          <Text>title: </Text>
-          <TextInput onChangeText={(text)=>setTitle(text)} style={styles.input} />
+        <View style={{flex:1,justifyContent:'center', alignItems:'center', textAlign:'center'}}>
+          <Image style = {{width:300,height:300, borderRadius: 10}} source={ require("../assets/icon.png")}/>
+                  <View style={{flex:.2,justifyContent:'center', alignItems:'center', flexDirection:'column', width:'100%'}}>
+          <TextInput label="title" onChangeText={(text)=>setTitle(text)} style={styles.input} />
           </View>
-          <View style={{flex:.1,justifyContent:'center', alignItems:'center', flexDirection:'row'}}>
-          <Text>description: </Text>
-          <TextInput onChangeText={(text)=>setDescription(text)} style={styles.input} />
+          <View style={{flex:.1,justifyContent:'center', alignItems:'center', flexDirection:'column'}}>
+          <TextInput label="description" onChangeText={(text)=>setDescription(text)} style={styles.input} />
+          
           </View>
-        <Button title = "add picture" onPress={()=>{pickImage()}}></Button>
-        <Button title = "date of" onPress={()=>{pickImage()}}></Button>
+          
+          <View style= {{ justifyContent:'center', alignItems:'center', width:'100%'}}>
+          <DateTimePicker display='compact' style = {{color:'black', width:"20%", height:'20%'}}  value={time} onChange={(event,date)=>setTime(date)}  /> 
+        {/* <Button title = "add picture" onPress={()=>{pickImage()}}></Button> */}
           <Button title = "cancel" onPress={()=>{setModalAddMemory(false)}}></Button>
           <Button title = "save" onPress={()=>{handleSave()}}></Button>
+          </View>
         </View>
       </Modal>
-                   <TouchableOpacity style={[styles.nextBtn, { width: '55%', height: 50 }]} onPress={() => {}}>
-          <Text style={{ color: '#ffff', textAlign: 'center' }}>add to an existing memory</Text>
+  
+      <TouchableOpacity style={[styles.nextBtn, { width: '55%', height: 50 }]} onPress={() => {handleDeleteMemory()}}>
+          <Text style={{ color: '#ffff', textAlign: 'center' }}>delete memories</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.nextBtn, { width: '55%', height: 50 }]} onPress={() => {handleAddNewMemory()}}>
+          <TouchableOpacity style={[styles.nextBtn, { width: '55%', height: 50 }]} onPress={() => {handleAddNewMemory()}}>
+          <Text style={{ color: '#ffff', textAlign: 'center' }}>add new memory</Text>
+        </TouchableOpacity>
+    
+</View>
+      </ImageBackground>
+  )
+  else return (
+    <ImageBackground resizeMode={"cover"} source={require('../assets/settings-background.png')} style={styles.container}>
+          <View style = {styles.topSpace,{ marginTop: Dimensions.get('window').height < 700 ? '5%' : '20%'}}>
+      <Text style = {{color:'black', fontSize:"25rem", fontFamily:'Lato-Medium'}}>{"Memories"}</Text>
+
+      </View>
+
+<View style = {{backgroundColor:'#ffff', height:'75%', width:'95%', borderRadius:15, alignItems:'center',marginBottom:'5%',marginTop:'10%'}}>
+    <View style = {{height:'10%', justifyContent:'center', alignItems:'center'}}>
+    <Text style = {{fontSize: 20, fontFamily:'Lato-Regular'}} >Timeline</Text>
+    </View>
+    <View style = {{flex: 1, justifyContent:'center'}}>
+ <Text style ={{fontFamily:'Lato-Medium', fontWeight:'400', fontSize:'20rem', textAlign:'center' }}>add a memory to start a timeline!</Text>
+ </View>
+              <Modal isVisible={modalAddMemory} backdropColor={"white"} backdropOpacity={1}  style={styles.modalView} animationInTiming={300} hideModalContentWhileAnimating={true}>
+                <View style = {{flex:.5, alignItems:'center', marginTop:'25%'}}>
+              <Image style = {{width:300,height:300, borderRadius: 10}} source={ test!= null? {uri:test[0].image} : require("../assets/icon.png")}/>
+              </View>
+        <View style={{flex:1,justifyContent:'center', alignItems:'center', textAlign:'center'}}>
+                  <View style={{flex:.2,justifyContent:'center', alignItems:'center', flexDirection:'column', width:'100%'}}>
+          <TextInput label = "title" onChangeText={(text)=>setTitle(text)} style={styles.input} />
+          </View>
+          <View style={{flex:.1,justifyContent:'center', alignItems:'center', flexDirection:'column', width:'100%',}}>
+          <TextInput label="description" onChangeText={(text)=>setDescription(text)} style={styles.input} />
+          
+          </View>
+          
+          <View style= {{ justifyContent:'center', alignItems:'center', width:'100%', flex:.5}}>
+          <DateTimePicker display='compact' style = {{color:'black', width:"20%", height:'20%'}}  value={time} onChange={(event,date)=>setTime(date)}  /> 
+          <Button title = "cancel" onPress={()=>{setModalAddMemory(false)}}></Button>
+          <Button title = "save" onPress={()=>{handleSave()}}></Button>
+          </View>
+        </View>
+      </Modal>
+  
+  
+          <TouchableOpacity style={[styles.nextBtn, { width: '55%', height: 50 }]} onPress={() => {handleAddNewMemory()}}>
           <Text style={{ color: '#ffff', textAlign: 'center' }}>add new memory</Text>
         </TouchableOpacity>
     
@@ -427,14 +512,14 @@ modalView:{
   justifyContent:'center',
 },
 input: {
-  width: '80%',
+  width: '70%',
   height: 50,
   borderRadius: 10,
   backgroundColor:'transparent',
   borderBottomWidth:1,
   borderColor:'#FAF9F6',
-  textAlign:'center',
-  color:'white'
+  textAlign:'flex-start',
+  color:'white', 
 }
 
 
