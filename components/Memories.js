@@ -84,47 +84,16 @@ const pickImage = async () => {
   useEffect(() => {
     setLoading(true)
 
-    AsyncStorage.getItem("memories").then((res)=>setTest(JSON.parse(res).sort(
+    AsyncStorage.getItem("memories").then((res)=>{
+      if(res != null)
+      {
+    setTest(JSON.parse(res).sort(
       (objA, objB) => new Date(objA.time) - new Date(objB.time)
     ))
+      }
+    }
     ).then(()=>setLoading(false))
-    //   getSchedule().then(
-    //     (res) => {
-    //       setData(res.sort(
-    //       (objA, objB) => new Date(objA.date) - new Date(objB.date)
-    //     ).filter((obj)=> {if(!isBeforeToday(obj.date)) return obj
-    //   } )
-      
-    //     )
-    //   }
-    //   ).then(()=>{   
-     
-    //     getLoginState().then((res)=>
-    //     {
-    //       if(res == "passed")
-    //       {
-    //       setLoading(false)
-    //       }
-    //       else{
-    //         setTimeout(
-    //           function()
-    //         {
-    //           getSchedule().then(
-    //             (res) => {
-    //               setData(res.sort(
-    //               (objA, objB) => new Date(objA.date) - new Date(objB.date)
-    //             ).filter((obj)=> {if(!isBeforeToday(obj.date)) return obj
-    //           } )
-              
-    //             )
-    //           }
-    //           ).then(()=>setLoading(false))
-    //         }, 5000
-    //         )
-    //       }
-    //     })
-    // }
-    //  )
+   
 
   }
     , [])
@@ -228,6 +197,19 @@ const pickImage = async () => {
    }
   const handleSave = async ()=>{
     setLoading(true)
+    if(title.length < 1 || description.length < 1)
+    {
+    
+      Alert.alert('Oops', 'Fields cannot be empty.', [
+        
+        { text: 'OK', onPress:()=>{
+
+     
+        }},
+      ]);
+      setLoading(false)
+      return
+    }
     let m
     setModalAddMemory(false)
     await AsyncStorage.getItem("memories").then((res)=>{
@@ -241,14 +223,8 @@ const pickImage = async () => {
             image: image
           }
         ]
-        AsyncStorage.setItem("memories", JSON.stringify(m.sort(
-          (objA, objB) => new Date(objA.time) - new Date(objB.time)
-        ))).then(
-          ()=>AsyncStorage.getItem("memories").then(
-            (res)=>setTest(JSON.parse(res).sort(
-              (objA, objB) => new Date(objA.time) - new Date(objB.time)
-            ))
-          )
+        AsyncStorage.setItem("memories", JSON.stringify(m)).then(
+          ()=>setTest(m)
          ).then(()=>setLoading(false))
       }
       else{
@@ -353,7 +329,7 @@ const pickImage = async () => {
           </View>
           
           <View style= {{ justifyContent:'center', alignItems:'center', width:'100%'}}>
-          <DateTimePicker display='compact' style = {{color:'black', width:"20%", height:'20%'}}  value={time} onChange={(event,date)=>setTime(date)}  /> 
+          <DateTimePicker themeVariant='light' display='compact' style = {{ width:"20%", height:'20%'}}  value={time} onChange={(event,date)=>setTime(date)}  /> 
         {/* <Button title = "add picture" onPress={()=>{pickImage()}}></Button> */}
           <Button title = "cancel" onPress={()=>{setModalAddMemory(false)}}></Button>
           <Button title = "save" onPress={()=>{handleSave()}}></Button>
@@ -399,7 +375,7 @@ const pickImage = async () => {
           </View>
           
           <View style= {{ justifyContent:'center', alignItems:'center', width:'100%', flex:.5}}>
-          <DateTimePicker display='compact' style = {{color:'black', width:"20%", height:'20%'}}  value={time} onChange={(event,date)=>setTime(date)}  /> 
+          <DateTimePicker themeVariant='light' display='compact' style = {{color:'black', width:"20%", height:'20%'}}  value={time} onChange={(event,date)=>setTime(date)}  /> 
           <Button title = "cancel" onPress={()=>{setModalAddMemory(false)}}></Button>
           <Button title = "save" onPress={()=>{handleSave()}}></Button>
           </View>
