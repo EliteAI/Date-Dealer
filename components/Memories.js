@@ -84,7 +84,9 @@ const pickImage = async () => {
   useEffect(() => {
     setLoading(true)
 
-    AsyncStorage.getItem("memories").then((res)=>setTest(JSON.parse(res))
+    AsyncStorage.getItem("memories").then((res)=>setTest(JSON.parse(res).sort(
+      (objA, objB) => new Date(objA.time) - new Date(objB.time)
+    ))
     ).then(()=>setLoading(false))
     //   getSchedule().then(
     //     (res) => {
@@ -158,9 +160,9 @@ const pickImage = async () => {
       (res) => {
 
         let orderedRes = res.sort(
-          (objA, objB) => new Date(objA.date) - new Date(objB.date)
+          (objA, objB) => new Date(objA.time) - new Date(objB.time)
         ).filter((obj) => {
-          if (!isBeforeToday(obj.date)) return obj
+          if (!isBeforeToday(obj.time)) return obj
         }
         )
 
@@ -239,9 +241,13 @@ const pickImage = async () => {
             image: image
           }
         ]
-        AsyncStorage.setItem("memories", JSON.stringify(m)).then(
+        AsyncStorage.setItem("memories", JSON.stringify(m.sort(
+          (objA, objB) => new Date(objA.time) - new Date(objB.time)
+        ))).then(
           ()=>AsyncStorage.getItem("memories").then(
-            (res)=>setTest(JSON.parse(res))
+            (res)=>setTest(JSON.parse(res).sort(
+              (objA, objB) => new Date(objA.time) - new Date(objB.time)
+            ))
           )
          ).then(()=>setLoading(false))
       }
@@ -254,10 +260,14 @@ const pickImage = async () => {
             description:description,
             image: image
           })
-      console.log(JSON.stringify(res))  
-        AsyncStorage.setItem("memories", JSON.stringify(m)).then(
+
+        AsyncStorage.setItem("memories", JSON.stringify(m.sort(
+          (objA, objB) => new Date(objA.time) - new Date(objB.time)
+        ))).then(
           ()=>AsyncStorage.getItem("memories").then(
-            (res)=>setTest(JSON.parse(res))
+            (res)=>setTest(JSON.parse(res).sort(
+              (objA, objB) => new Date(objA.time) - new Date(objB.time)
+            ))
           )
          ).then(()=>setLoading(false))
       }
@@ -337,7 +347,7 @@ const pickImage = async () => {
                   <View style={{flex:.2,justifyContent:'center', alignItems:'center', flexDirection:'column', width:'100%'}}>
           <TextInput label="title" onChangeText={(text)=>setTitle(text)} style={styles.input} />
           </View>
-          <View style={{flex:.1,justifyContent:'center', alignItems:'center', flexDirection:'column'}}>
+          <View style={{flex:.1,justifyContent:'center', alignItems:'center', flexDirection:'column', width:'100%'}}>
           <TextInput label="description" onChangeText={(text)=>setDescription(text)} style={styles.input} />
           
           </View>
