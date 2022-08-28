@@ -82,44 +82,45 @@ const pickImage = async () => {
   useEffect(() => {
     setLoading(true)
 
-    AsyncStorage.getItem("memories").then((res)=>setTest(JSON.parse(res)))
-      getSchedule().then(
-        (res) => {
-          setData(res.sort(
-          (objA, objB) => new Date(objA.date) - new Date(objB.date)
-        ).filter((obj)=> {if(!isBeforeToday(obj.date)) return obj
-      } )
+    AsyncStorage.getItem("memories").then((res)=>setTest(JSON.parse(res))
+    ).then(()=>setLoading(false))
+    //   getSchedule().then(
+    //     (res) => {
+    //       setData(res.sort(
+    //       (objA, objB) => new Date(objA.date) - new Date(objB.date)
+    //     ).filter((obj)=> {if(!isBeforeToday(obj.date)) return obj
+    //   } )
       
-        )
-      }
-      ).then(()=>{   
+    //     )
+    //   }
+    //   ).then(()=>{   
      
-        getLoginState().then((res)=>
-        {
-          if(res == "passed")
-          {
-          setLoading(false)
-          }
-          else{
-            setTimeout(
-              function()
-            {
-              getSchedule().then(
-                (res) => {
-                  setData(res.sort(
-                  (objA, objB) => new Date(objA.date) - new Date(objB.date)
-                ).filter((obj)=> {if(!isBeforeToday(obj.date)) return obj
-              } )
+    //     getLoginState().then((res)=>
+    //     {
+    //       if(res == "passed")
+    //       {
+    //       setLoading(false)
+    //       }
+    //       else{
+    //         setTimeout(
+    //           function()
+    //         {
+    //           getSchedule().then(
+    //             (res) => {
+    //               setData(res.sort(
+    //               (objA, objB) => new Date(objA.date) - new Date(objB.date)
+    //             ).filter((obj)=> {if(!isBeforeToday(obj.date)) return obj
+    //           } )
               
-                )
-              }
-              ).then(()=>setLoading(false))
-            }, 5000
-            )
-          }
-        })
-    }
-     )
+    //             )
+    //           }
+    //           ).then(()=>setLoading(false))
+    //         }, 5000
+    //         )
+    //       }
+    //     })
+    // }
+    //  )
 
   }
     , [])
@@ -209,6 +210,7 @@ const pickImage = async () => {
   }
 
   const handleSave = async ()=>{
+    setLoading(true)
     let m =[
       {
         time:"9/25/2022",
@@ -221,7 +223,7 @@ const pickImage = async () => {
       ()=>AsyncStorage.getItem("memories").then(
         (res)=>setTest(JSON.parse(res))
       )
-     )
+     ).then(()=>setLoading(false))
    }
 
   const viewableItemsChanged = useRef(

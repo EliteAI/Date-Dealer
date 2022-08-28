@@ -94,22 +94,20 @@ const Settings = ({ navigation }) => {
   const handleReShuffle = async ()=>{
     async function move(){
       await AsyncStorage.setItem('appState', "questioning")
-      navigation.navigate('p1_questionaire')
     }
     try {
-      Alert.alert('Confirm', 'Are you sure you want to reshuffle? You will lose all of your current dates and will be promted to re-enter your information.', [
+      Alert.alert('Confirm', 'Are you sure you want to reshuffle? You will lose all of your current dates.', [
         
         {text:'Cancel'},
         { text: 'OK', onPress:()=>{
 
+          setLoading(true)
           deleteSchedule()
-          deleteAvailability()
-          deleteInterests()
           deleteLocation()
           move()
      
         }},
-      ]);
+      ])
     } catch (e) {
       // saving error
     }

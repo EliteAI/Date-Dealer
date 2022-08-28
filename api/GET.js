@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 import { Alert, Linking } from 'react-native';
 
@@ -92,11 +93,12 @@ for(const key in interests)
   const getLocation = async() => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permissions Required', 'please grant location permissions in device settings in order to find events near you.', [
+      Alert.alert('Permissions Required', 'please grant location permissions in device settings in order to find events near you. For example, in order to find a resuraunt date near you we would first need to know your current location.', [
         { text: 'Cancel'},
         { text: 'OK', onPress: () => Linking.openURL('app-settings:')},
       ]);      return false;
     }
+    AsyncStorage.setItem("appState","questioning")
     return await Location.getCurrentPositionAsync({});
 
           } ;

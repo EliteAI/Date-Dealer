@@ -28,9 +28,9 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.nmason197.datedealer",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "This app usages device location in order to find events and establishments near the user's current whereabouts.",
-        "NSLocationAlwaysUsageDescription": "This app usages device location in order to find events and establishments near the user's current whereabouts. You may grant background location permissions, but only foreground location permissions are required.",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app usages device location in order to find events and establishments near the user's current whereabouts. You may grant background location permissions, but only foreground location permissions are required."
+        "NSLocationWhenInUseUsageDescription": "This app usages device location in order to find events and establishments near the user's current whereabouts. For example, in order to find a resuraunt date near you we would first need to know your current location.",
+        "NSLocationAlwaysUsageDescription": "This app usages device location in order to find events and establishments near the user's current whereabouts. You may grant background location permissions, but only foreground location permissions are required. For example, in order to find a resuraunt date near you we would first need to know your current location.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app usages device location in order to find events and establishments near the user's current whereabouts. You may grant background location permissions, but only foreground location permissions are required. For example, in order to find a resuraunt date near you we would first need to know your current location."
 
 
       }    },

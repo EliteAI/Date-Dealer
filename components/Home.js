@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Alert, Text, StyleSheet, FlatList, TouchableOpacity, Linking, useWindowDimensions, Animated, Image, ImageBackground, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getNames, getSchedule, getInterests, getAvailability, insertSchedule, deleteSchedule } from '../storage/Database';
+import { getNames, getSchedule, getInterests, getAvailability, insertSchedule } from '../storage/Database';
 import * as Calendar from 'expo-calendar';
 import { getLocation, getData } from '../api/GET';
 import plantDates from '../Service/PlantDates';
@@ -69,6 +69,7 @@ const Home = ({ navigation }) => {
 
 
         AsyncStorage.getItem("appState").then((res) => {
+
           if (res != "calculating" && res != "passed" && res != "finished") { initDates() } else if(res!="calculating") {
             setLoading(true)
             getSchedule().then(
@@ -80,6 +81,7 @@ const Home = ({ navigation }) => {
                   if (!isBeforeToday(obj.date)) return obj
                 })
 
+                
                 if (orderedRes.length < 1) {
                   AsyncStorage.setItem("appState", "finished")
                   setAppState("finished")
@@ -153,6 +155,9 @@ const Home = ({ navigation }) => {
       };
     }, []);
   
+
+
+    
     async function registerForPushNotificationsAsync() {
       let token;
       const { status: existingStatus } = await Notifications.getPermissionsAsync();
@@ -270,7 +275,7 @@ const Home = ({ navigation }) => {
             (loc) => {
               if (!loc) {
                 setLoading("no permissions")
-                AsyncStorage.setItem("appState", "finished")
+                AsyncStorage.setItem("appState", "no permissions")
                 return
               }
               getData(loc, activities).then(
@@ -489,7 +494,6 @@ const Home = ({ navigation }) => {
     } catch (e) {
       // saving error
     }
-    navigation.navigate('p1_questionaire')
   }
 
   const viewableItemsChanged = useRef(
@@ -524,7 +528,7 @@ const Home = ({ navigation }) => {
     }
   };
 
-  if (appState == "passed" || appState == "questioning" || appState == "calculating") return setMap(0)
+  if (appState == "passed" || appState == "questioning" || appState == "calculating" || appState =="no permissions") return setMap(0)
   else return setMap(1)
 
 }
