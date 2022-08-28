@@ -49,7 +49,8 @@ const Home = ({ navigation }) => {
 
   const getLoginState = async () => {
     try {
-      await AsyncStorage.getItem('appState').then((app) => { app == "passed" ? setAppState("passed") : app == "questioning" ? setAppState("questioning") : console.log(appState + " what") })
+      await AsyncStorage.getItem('appState').then((app) => { 
+        app == "passed" ? setAppState("passed") : app == "questioning" ? setAppState("questioning") : console.log(appState + " what") })
       return await AsyncStorage.getItem('appState')
     } catch (e) {
       // saving error
@@ -67,10 +68,10 @@ const Home = ({ navigation }) => {
       getLoginState().then((res) => {
         state = res;
 
-
-        AsyncStorage.getItem("appState").then((res) => {
-
-          if (res != "calculating" && res != "passed" && res != "finished") { initDates() } else if(res!="calculating") {
+        console.log(state)
+          if (res != "calculating" && res != "passed" && res != "finished") {    
+           initDates()
+        } else if(res!="calculating") {
             setLoading(true)
             getSchedule().then(
               (res) => {
@@ -110,7 +111,7 @@ const Home = ({ navigation }) => {
               })
             )
           }
-        })
+        
 
       }
 
@@ -157,7 +158,7 @@ const Home = ({ navigation }) => {
   
 
 
-    
+
     async function registerForPushNotificationsAsync() {
       let token;
       const { status: existingStatus } = await Notifications.getPermissionsAsync();
@@ -265,9 +266,9 @@ const Home = ({ navigation }) => {
     ]);
 
   const initDates = async () => {
+    setCalculating()
     let activities;
     let schedule;
-    await AsyncStorage.setItem("appState", "calculating")
     await queryInterests().then
       ((result) => {
         activities = result,
@@ -405,6 +406,9 @@ const Home = ({ navigation }) => {
     await AsyncStorage.setItem("appState", "passed")
   }
 
+  const setCalculating = async () => {
+    await AsyncStorage.setItem("appState", "calculating")
+  }
   const addToCalendar = () => {
     (async () => {
       // const { status } = await Calendar.getCalendarPermissionsAsync();

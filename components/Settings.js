@@ -100,11 +100,12 @@ const Settings = ({ navigation }) => {
         
         {text:'Cancel'},
         { text: 'OK', onPress:()=>{
+          console.log("called")
 
+          move()
           setLoading(true)
           deleteSchedule()
           deleteLocation()
-          move()
      
         }},
       ])

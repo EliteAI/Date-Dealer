@@ -98,7 +98,7 @@ for(const key in interests)
         { text: 'OK', onPress: () => Linking.openURL('app-settings:')},
       ]);      return false;
     }
-    AsyncStorage.setItem("appState","questioning")
+    AsyncStorage.setItem("appState","calculating")
     return await Location.getCurrentPositionAsync({});
 
           } ;
