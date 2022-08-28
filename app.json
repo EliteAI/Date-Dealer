@@ -9,7 +9,7 @@
       ]],
     "name": "Date Dealer",
     "slug": "date-dealer",
-    "version": "1.4.0",
+    "version": "1.6.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -28,9 +28,9 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.nmason197.datedealer",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "This app usages device location in order to find events and establishments near the user's current whereabouts. For example, in order to find a resuraunt date near you we would first need to know your current location.",
-        "NSLocationAlwaysUsageDescription": "This app usages device location in order to find events and establishments near the user's current whereabouts. You may grant background location permissions, but only foreground location permissions are required. For example, in order to find a resuraunt date near you we would first need to know your current location.",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app usages device location in order to find events and establishments near the user's current whereabouts. You may grant background location permissions, but only foreground location permissions are required. For example, in order to find a resuraunt date near you we would first need to know your current location."
+        "NSLocationWhenInUseUsageDescription": "This app usages device location in order to find events and establishments near the user's current whereabouts. For example, in order to find a resuraunt near you for your next date, we would first need to know your current location.",
+        "NSLocationAlwaysUsageDescription": "This app usages device location in order to find events and establishments near the user's current whereabouts. You may grant background location permissions, but only foreground location permissions are required. For example, in order to find a resuraunt near you for your next date we would first need to know your current location.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app usages device location in order to find events and establishments near the user's current whereabouts. You may grant background location permissions, but only foreground location permissions are required. For example, in order to find a resuraunt near you for your next date we would first need to know your current location."
 
 
       }    },

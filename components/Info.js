@@ -9,7 +9,7 @@ const Info = ({ navigation }) => { return (
       <Text style = {{color:'black', fontSize:"25rem", fontFamily:'Lato-Medium'}}>{"General Information"}</Text>
 
       </View>
-      <Text style = {{color:'white', fontSize:16, flex:1, justifyContent:'center',marginTop: Dimensions.get('window').height < 700 ? '10%' : '20%'}}>{"v1.4.0"}</Text>
+      <Text style = {{color:'white', fontSize:16, flex:1, justifyContent:'center',marginTop: Dimensions.get('window').height < 700 ? '10%' : '20%'}}>{"v1.6.1"}</Text>
 
 <View style = {{backgroundColor:'#ffff', flex:10, width:'90%', borderRadius:15, alignItems:'center',marginBottom:'5%'}}>
   

@@ -291,7 +291,7 @@ const pickImage = async () => {
 </View>
 </ImageBackground>
 
-  else if(test != null) return (
+  else if(test.length > 0) return (
     <ImageBackground resizeMode={"cover"} source={require('../assets/settings-background.png')} style={styles.container}>
           <View style = {styles.topSpace,{ marginTop: Dimensions.get('window').height < 700 ? '5%' : '20%'}}>
       <Text style = {{color:'black', fontSize:"25rem", fontFamily:'Lato-Medium'}}>{"Memories"}</Text>
@@ -316,34 +316,30 @@ const pickImage = async () => {
     
       
         />
-              <Modal isVisible={modalAddMemory} backdropColor={"white"} backdropOpacity={1}  style={styles.modalView} animationInTiming={300} hideModalContentWhileAnimating={true}>
 
+              <Modal isVisible={modalAddMemory} backdropColor={"white"} backdropOpacity={1}  style={styles.modalView} animationInTiming={300} hideModalContentWhileAnimating={true}>
+                <View style={{alignItems:'center'}}>
+              <Image style = {{width:300,height:300, borderRadius: 10}} source={ require("../assets/icon.png")}/>
+              </View>
         <View style={{flex:1,justifyContent:'center', alignItems:'center', textAlign:'center'}}>
-          <Image style = {{width:300,height:300, borderRadius: 10}} source={ require("../assets/icon.png")}/>
-                  <View style={{flex:.2,justifyContent:'center', alignItems:'center', flexDirection:'column', width:'100%'}}>
           <TextInput label="title" onChangeText={(text)=>setTitle(text)} style={styles.input} />
-          </View>
-          <View style={{flex:.1,justifyContent:'center', alignItems:'center', flexDirection:'column', width:'100%'}}>
           <TextInput label="description" onChangeText={(text)=>setDescription(text)} style={styles.input} />
-          
-          </View>
-          
+                    
           <View style= {{ justifyContent:'center', alignItems:'center', width:'100%'}}>
           <DateTimePicker themeVariant='light' display='compact' style = {{ width:"20%", height:'20%'}}  value={time} onChange={(event,date)=>setTime(date)}  /> 
         {/* <Button title = "add picture" onPress={()=>{pickImage()}}></Button> */}
+        <Button title = "save" onPress={()=>{handleSave()}}></Button>
           <Button title = "cancel" onPress={()=>{setModalAddMemory(false)}}></Button>
-          <Button title = "save" onPress={()=>{handleSave()}}></Button>
           </View>
         </View>
       </Modal>
   
-      <TouchableOpacity style={[styles.nextBtn, { width: '55%', height: 50 }]} onPress={() => {handleDeleteMemory()}}>
-          <Text style={{ color: '#ffff', textAlign: 'center' }}>delete memories</Text>
-        </TouchableOpacity>
           <TouchableOpacity style={[styles.nextBtn, { width: '55%', height: 50 }]} onPress={() => {handleAddNewMemory()}}>
           <Text style={{ color: '#ffff', textAlign: 'center' }}>add new memory</Text>
         </TouchableOpacity>
-    
+        <TouchableOpacity style={[styles.nextBtn, { width: '55%', height: 50 }]} onPress={() => {handleDeleteMemory()}}>
+          <Text style={{ color: '#ffff', textAlign: 'center' }}>delete memories</Text>
+        </TouchableOpacity>
 </View>
       </ImageBackground>
   )
@@ -359,11 +355,11 @@ const pickImage = async () => {
     <Text style = {{fontSize: 20, fontFamily:'Lato-Regular'}} >Timeline</Text>
     </View>
     <View style = {{flex: 1, justifyContent:'center'}}>
- <Text style ={{fontFamily:'Lato-Medium', fontWeight:'400', fontSize:'20rem', textAlign:'center' }}>add a memory to start a timeline!</Text>
+ <Text style ={{fontFamily:'Lato-Medium', fontWeight:'400', fontSize:'20rem', textAlign:'center' , color:'black'}}>add a memory to start a timeline!</Text>
  </View>
               <Modal isVisible={modalAddMemory} backdropColor={"white"} backdropOpacity={1}  style={styles.modalView} animationInTiming={300} hideModalContentWhileAnimating={true}>
                 <View style = {{flex:.5, alignItems:'center', marginTop:'25%'}}>
-              <Image style = {{width:300,height:300, borderRadius: 10}} source={ test!= null? {uri:test[0].image} : require("../assets/icon.png")}/>
+              <Image style = {{width:300,height:300, borderRadius: 10}} source={require("../assets/icon.png")}/>
               </View>
         <View style={{flex:1,justifyContent:'center', alignItems:'center', textAlign:'center'}}>
                   <View style={{flex:.2,justifyContent:'center', alignItems:'center', flexDirection:'column', width:'100%'}}>
@@ -376,8 +372,8 @@ const pickImage = async () => {
           
           <View style= {{ justifyContent:'center', alignItems:'center', width:'100%', flex:.5}}>
           <DateTimePicker themeVariant='light' display='compact' style = {{color:'black', width:"20%", height:'20%'}}  value={time} onChange={(event,date)=>setTime(date)}  /> 
-          <Button title = "cancel" onPress={()=>{setModalAddMemory(false)}}></Button>
           <Button title = "save" onPress={()=>{handleSave()}}></Button>
+          <Button title = "cancel" onPress={()=>{setModalAddMemory(false)}}></Button>
           </View>
         </View>
       </Modal>
@@ -496,6 +492,8 @@ flex:4
 ,
 modalView:{
   justifyContent:'center',
+  flex:1,
+  marginTop:'20%'
 },
 input: {
   width: '70%',
